@@ -14,16 +14,391 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      content_reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          reason: string
+          reporter_id: string | null
+          resolved: boolean
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason: string
+          reporter_id?: string | null
+          resolved?: boolean
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string | null
+          resolved?: boolean
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
+      fire_report_images: {
+        Row: {
+          created_at: string
+          fire_report_id: string
+          id: string
+          image_url: string
+        }
+        Insert: {
+          created_at?: string
+          fire_report_id: string
+          id?: string
+          image_url: string
+        }
+        Update: {
+          created_at?: string
+          fire_report_id?: string
+          id?: string
+          image_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fire_report_images_fire_report_id_fkey"
+            columns: ["fire_report_id"]
+            isOneToOne: false
+            referencedRelation: "fire_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fire_reports: {
+        Row: {
+          address: string | null
+          description: string | null
+          id: string
+          is_demo: boolean
+          latitude: number
+          longitude: number
+          protocol: string
+          reported_at: string
+          severity: Database["public"]["Enums"]["fire_severity"]
+          status: Database["public"]["Enums"]["fire_status"]
+          type: Database["public"]["Enums"]["fire_type"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          description?: string | null
+          id?: string
+          is_demo?: boolean
+          latitude: number
+          longitude: number
+          protocol?: string
+          reported_at?: string
+          severity: Database["public"]["Enums"]["fire_severity"]
+          status?: Database["public"]["Enums"]["fire_status"]
+          type: Database["public"]["Enums"]["fire_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          description?: string | null
+          id?: string
+          is_demo?: boolean
+          latitude?: number
+          longitude?: number
+          protocol?: string
+          reported_at?: string
+          severity?: Database["public"]["Enums"]["fire_severity"]
+          status?: Database["public"]["Enums"]["fire_status"]
+          type?: Database["public"]["Enums"]["fire_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      forum_comments: {
+        Row: {
+          author_name: string | null
+          content: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          post_id: string
+          user_id: string | null
+        }
+        Insert: {
+          author_name?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          post_id: string
+          user_id?: string | null
+        }
+        Update: {
+          author_name?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          post_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "forum_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_likes: {
+        Row: {
+          comment_id: string | null
+          created_at: string
+          id: string
+          post_id: string | null
+          user_id: string
+        }
+        Insert: {
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          user_id: string
+        }
+        Update: {
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "forum_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_posts: {
+        Row: {
+          author_name: string | null
+          category: Database["public"]["Enums"]["forum_category"]
+          content: string
+          created_at: string
+          id: string
+          is_demo: boolean
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["forum_category"]
+          content: string
+          created_at?: string
+          id?: string
+          is_demo?: boolean
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["forum_category"]
+          content?: string
+          created_at?: string
+          id?: string
+          is_demo?: boolean
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      news: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          category: Database["public"]["Enums"]["news_category"]
+          content: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_demo: boolean
+          published: boolean
+          slug: string
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["news_category"]
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_demo?: boolean
+          published?: boolean
+          slug: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["news_category"]
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_demo?: boolean
+          published?: boolean
+          slug?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          blocked: boolean
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          blocked?: boolean
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          blocked?: boolean
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "moderator" | "admin"
+      fire_severity: "pequeno" | "medio" | "grande" | "emergencia"
+      fire_status:
+        | "pending"
+        | "verified"
+        | "active"
+        | "resolved"
+        | "false_report"
+      fire_type:
+        | "florestal"
+        | "residencial"
+        | "comercial"
+        | "veicular"
+        | "queimada"
+        | "outro"
+      forum_category:
+        | "incendios"
+        | "meio_ambiente"
+        | "prevencao"
+        | "seguranca"
+        | "alertas"
+        | "comunidade"
+        | "geral"
+      news_category:
+        | "prevencao"
+        | "incendios"
+        | "meio_ambiente"
+        | "seguranca"
+        | "alertas"
+        | "comunidade"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +525,41 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "moderator", "admin"],
+      fire_severity: ["pequeno", "medio", "grande", "emergencia"],
+      fire_status: [
+        "pending",
+        "verified",
+        "active",
+        "resolved",
+        "false_report",
+      ],
+      fire_type: [
+        "florestal",
+        "residencial",
+        "comercial",
+        "veicular",
+        "queimada",
+        "outro",
+      ],
+      forum_category: [
+        "incendios",
+        "meio_ambiente",
+        "prevencao",
+        "seguranca",
+        "alertas",
+        "comunidade",
+        "geral",
+      ],
+      news_category: [
+        "prevencao",
+        "incendios",
+        "meio_ambiente",
+        "seguranca",
+        "alertas",
+        "comunidade",
+      ],
+    },
   },
 } as const
