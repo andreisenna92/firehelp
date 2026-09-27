@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as AuthenticatedReportarRouteImport } from './routes/_authenticated/reportar'
+import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
+import { Route as ComunidadePostIdRouteImport } from './routes/comunidade.$postId'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 
@@ -41,6 +43,16 @@ const AuthenticatedReportarRoute = AuthenticatedReportarRouteImport.update({
   path: '/reportar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ComunidadeIndexRoute = ComunidadeIndexRouteImport.update({
+  id: '/comunidade/',
+  path: '/comunidade/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComunidadePostIdRoute = ComunidadePostIdRouteImport.update({
+  id: '/comunidade/$postId',
+  path: '/comunidade/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
@@ -57,7 +69,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/reportar': typeof AuthenticatedReportarRoute
+  '/comunidade/$postId': typeof ComunidadePostIdRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
+  '/comunidade/': typeof ComunidadeIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
 }
 export interface FileRoutesByTo {
@@ -65,7 +79,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/reportar': typeof AuthenticatedReportarRoute
+  '/comunidade/$postId': typeof ComunidadePostIdRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
+  '/comunidade': typeof ComunidadeIndexRoute
   '/noticias': typeof NoticiasIndexRoute
 }
 export interface FileRoutesById {
@@ -75,15 +91,32 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/_authenticated/reportar': typeof AuthenticatedReportarRoute
+  '/comunidade/$postId': typeof ComunidadePostIdRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
+  '/comunidade/': typeof ComunidadeIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/mapa' | '/reportar' | '/noticias/$slug' | '/noticias/'
+    | '/'
+    | '/auth'
+    | '/mapa'
+    | '/reportar'
+    | '/comunidade/$postId'
+    | '/noticias/$slug'
+    | '/comunidade/'
+    | '/noticias/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/mapa' | '/reportar' | '/noticias/$slug' | '/noticias'
+  to:
+    | '/'
+    | '/auth'
+    | '/mapa'
+    | '/reportar'
+    | '/comunidade/$postId'
+    | '/noticias/$slug'
+    | '/comunidade'
+    | '/noticias'
   id:
     | '__root__'
     | '/'
@@ -91,7 +124,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mapa'
     | '/_authenticated/reportar'
+    | '/comunidade/$postId'
     | '/noticias/$slug'
+    | '/comunidade/'
     | '/noticias/'
   fileRoutesById: FileRoutesById
 }
@@ -100,7 +135,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   MapaRoute: typeof MapaRoute
+  ComunidadePostIdRoute: typeof ComunidadePostIdRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
+  ComunidadeIndexRoute: typeof ComunidadeIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
 }
 
@@ -141,6 +178,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/comunidade/': {
+      id: '/comunidade/'
+      path: '/comunidade'
+      fullPath: '/comunidade/'
+      preLoaderRoute: typeof ComunidadeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comunidade/$postId': {
+      id: '/comunidade/$postId'
+      path: '/comunidade/$postId'
+      fullPath: '/comunidade/$postId'
+      preLoaderRoute: typeof ComunidadePostIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/noticias/': {
       id: '/noticias/'
       path: '/noticias'
@@ -174,7 +225,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   MapaRoute: MapaRoute,
+  ComunidadePostIdRoute: ComunidadePostIdRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
+  ComunidadeIndexRoute: ComunidadeIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
 }
 export const routeTree = rootRouteImport
