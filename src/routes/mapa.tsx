@@ -38,8 +38,6 @@ export const Route = createFileRoute("/mapa")({
 type StatusFilter = "todos" | FireStatus;
 type TypeFilter = "todos" | FireType;
 
-export default function noop() {}
-
 function MapPage() {
   const { data, isLoading } = useReports();
   const [status, setStatus] = useState<StatusFilter>("todos");
