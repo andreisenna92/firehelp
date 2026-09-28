@@ -107,7 +107,7 @@ function TopicPage() {
   }
 
   async function toggleLike(commentId: string) {
-    if (!user) return toast.error("Entre para curtir comentários.");
+    if (!user) { toast.error("Entre para curtir comentários."); return; }
     const existing = (likes.data ?? []).find(
       (like) => like.comment_id === commentId && like.user_id === user.id,
     );
@@ -120,7 +120,7 @@ function TopicPage() {
   }
 
   async function reportContent(targetType: string, targetId: string) {
-    if (!user) return toast.error("Entre para denunciar conteúdo.");
+    if (!user) { toast.error("Entre para denunciar conteúdo."); return; }
     const reason = window.prompt(`Motivo da denúncia:\n${REPORT_REASONS.join(" · ")}`);
     if (!reason) return;
     const { error } = await supabase.from("content_reports").insert({

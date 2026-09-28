@@ -80,9 +80,9 @@ function ReportPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!user) return;
-    if (!type) return toast.error("Escolha o tipo de ocorrência.");
-    if (!coords) return toast.error("Informe a localização da ocorrência.");
-    if (!confirmed) return toast.error("Confirme que as informações são verdadeiras.");
+    if (!type) { toast.error("Escolha o tipo de ocorrência."); return; }
+    if (!coords) { toast.error("Informe a localização da ocorrência."); return; }
+    if (!confirmed) { toast.error("Confirme que as informações são verdadeiras."); return; }
 
     setSaving(true);
     try {

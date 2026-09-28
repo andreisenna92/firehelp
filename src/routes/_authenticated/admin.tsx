@@ -121,7 +121,7 @@ function AdminPage() {
 
   async function createNews(event: React.FormEvent) {
     event.preventDefault();
-    if (!title.trim() || !content.trim()) return toast.error("Título e conteúdo são obrigatórios.");
+    if (!title.trim() || !content.trim()) { toast.error("Título e conteúdo são obrigatórios."); return; }
     setSavingNews(true);
     const { error } = await supabase.from("news").insert({
       title: title.trim(),
