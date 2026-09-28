@@ -89,28 +89,28 @@ function Dashboard() {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatCard
             label="Incêndios ativos"
-            value={stats.data?.active}
+            value={stats.data?.active ?? 0}
             loading={stats.isLoading}
             icon={<Flame className="size-4 text-alert" />}
             accent="text-alert"
           />
           <StatCard
             label="Reportados hoje"
-            value={stats.data?.today}
+            value={stats.data?.today ?? 0}
             loading={stats.isLoading}
             icon={<Activity className="size-4 text-ember" />}
             accent="text-ember"
           />
           <StatCard
             label="Ocorrências resolvidas"
-            value={stats.data?.resolved}
+            value={stats.data?.resolved ?? 0}
             loading={stats.isLoading}
             icon={<ShieldCheck className="size-4 text-success" />}
             accent="text-success"
           />
           <StatCard
             label="Pessoas na comunidade"
-            value={stats.data?.users}
+            value={stats.data?.users ?? 0}
             loading={stats.isLoading}
             icon={<Users className="size-4 text-primary" />}
             accent="text-foreground"

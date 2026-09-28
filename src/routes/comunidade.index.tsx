@@ -47,7 +47,7 @@ function ForumPage() {
   async function createTopic(event: React.FormEvent) {
     event.preventDefault();
     if (!user) return;
-    if (!title.trim() || !content.trim()) return toast.error("Preencha título e conteúdo.");
+    if (!title.trim() || !content.trim()) { toast.error("Preencha título e conteúdo."); return; }
     setSaving(true);
     const { error } = await supabase.from("forum_posts").insert({
       user_id: user.id,
