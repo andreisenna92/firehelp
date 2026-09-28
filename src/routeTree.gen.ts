@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedReportarRouteImport } from './routes/_authenticated/reportar'
 import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
 import { Route as ComunidadePostIdRouteImport } from './routes/comunidade.$postId'
@@ -37,6 +39,16 @@ const MapaRoute = MapaRouteImport.update({
   id: '/mapa',
   path: '/mapa',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReportarRoute = AuthenticatedReportarRouteImport.update({
   id: '/reportar',
@@ -68,6 +80,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/reportar': typeof AuthenticatedReportarRoute
   '/comunidade/$postId': typeof ComunidadePostIdRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
@@ -78,6 +92,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/reportar': typeof AuthenticatedReportarRoute
   '/comunidade/$postId': typeof ComunidadePostIdRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
@@ -90,6 +106,8 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/reportar': typeof AuthenticatedReportarRoute
   '/comunidade/$postId': typeof ComunidadePostIdRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
@@ -102,6 +120,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mapa'
+    | '/admin'
+    | '/perfil'
     | '/reportar'
     | '/comunidade/$postId'
     | '/noticias/$slug'
@@ -112,6 +132,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mapa'
+    | '/admin'
+    | '/perfil'
     | '/reportar'
     | '/comunidade/$postId'
     | '/noticias/$slug'
@@ -123,6 +145,8 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/mapa'
+    | '/_authenticated/admin'
+    | '/_authenticated/perfil'
     | '/_authenticated/reportar'
     | '/comunidade/$postId'
     | '/noticias/$slug'
@@ -171,6 +195,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reportar': {
       id: '/_authenticated/reportar'
       path: '/reportar'
@@ -210,10 +248,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedReportarRoute: typeof AuthenticatedReportarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedReportarRoute: AuthenticatedReportarRoute,
 }
 
