@@ -8,17 +8,19 @@ import { NEWS_CATEGORIES, formatDate } from "@/lib/firehelp";
 export const Route = createFileRoute("/noticias/")({
   head: () => ({
     meta: [
-      { title: "Notícias e alertas — FIREHELP" },
+      { title: "Notícias e alertas de Saquarema — FIREHELP" },
       {
         name: "description",
         content:
-          "Notícias, alertas e conteúdos de prevenção contra incêndios publicados pela equipe FIREHELP.",
+          "Notícias, alertas e conteúdos de prevenção contra incêndios para Saquarema, RJ.",
       },
-      { property: "og:title", content: "Notícias e alertas — FIREHELP" },
+      { property: "og:title", content: "Notícias e alertas de Saquarema — FIREHELP" },
       {
         property: "og:description",
-        content: "Prevenção, meio ambiente, segurança e alertas para a sua comunidade.",
+        content: "Prevenção, meio ambiente, segurança e alertas para Saquarema.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: NewsList,
@@ -34,7 +36,7 @@ function NewsList() {
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">📰 Notícias e alertas</h1>
           <p className="text-sm text-muted-foreground">
-            Conteúdos de prevenção, alertas e informações da comunidade.
+             Conteúdos de prevenção, alertas e informações para Saquarema.
           </p>
         </div>
 

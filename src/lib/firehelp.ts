@@ -6,6 +6,8 @@ export type FireStatus = Database["public"]["Enums"]["fire_status"];
 export type NewsCategory = Database["public"]["Enums"]["news_category"];
 export type ForumCategory = Database["public"]["Enums"]["forum_category"];
 
+export const SAQUAREMA_CENTER: [number, number] = [-22.9324, -42.4867];
+
 export const FIRE_TYPES: { value: FireType; label: string }[] = [
   { value: "florestal", label: "Incêndio florestal" },
   { value: "residencial", label: "Incêndio residencial" },

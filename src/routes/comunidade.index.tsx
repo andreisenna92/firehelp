@@ -16,17 +16,19 @@ import { FORUM_CATEGORIES, formatDateTime, type ForumCategory } from "@/lib/fire
 export const Route = createFileRoute("/comunidade/")({
   head: () => ({
     meta: [
-      { title: "Comunidade — FIREHELP" },
+      { title: "Comunidade de Saquarema — FIREHELP" },
       {
         name: "description",
         content:
-          "Fórum comunitário para discutir prevenção, ocorrências e segurança contra incêndios na sua região.",
+          "Fórum comunitário de Saquarema para discutir prevenção, ocorrências e segurança contra incêndios.",
       },
-      { property: "og:title", content: "Comunidade — FIREHELP" },
+      { property: "og:title", content: "Comunidade de Saquarema — FIREHELP" },
       {
         property: "og:description",
-        content: "Participe das discussões sobre prevenção, meio ambiente e segurança.",
+        content: "Participe das discussões de Saquarema sobre prevenção, meio ambiente e segurança.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ForumPage,
@@ -75,7 +77,7 @@ function ForumPage() {
           <div>
             <h1 className="text-2xl font-bold md:text-3xl">💬 Comunidade</h1>
             <p className="text-sm text-muted-foreground">
-              Discuta prevenção, ocorrências e segurança com pessoas da sua região.
+              Discuta prevenção, ocorrências e segurança com moradores de Saquarema.
             </p>
           </div>
           {user ? (

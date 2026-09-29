@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import { useEffect } from "react";
-import { statusColor, type FireStatus } from "@/lib/firehelp";
+import { SAQUAREMA_CENTER, statusColor, type FireStatus } from "@/lib/firehelp";
 
 export type MapPoint = {
   id: string;
@@ -48,7 +48,7 @@ function Recenter({ center, zoom }: { center: [number, number]; zoom: number }) 
 
 export default function FireMapImpl({
   points = [],
-  center = [-23.55, -46.63],
+  center = SAQUAREMA_CENTER,
   zoom = 11,
   picked = null,
   onPick,

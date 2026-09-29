@@ -17,13 +17,15 @@ export const Route = createFileRoute("/comunidade/$postId")({
       { title: "Tópico da comunidade — FIREHELP" },
       {
         name: "description",
-        content: "Participe da discussão da comunidade FIREHELP sobre prevenção e segurança.",
+        content: "Participe da discussão da comunidade de Saquarema sobre prevenção e segurança.",
       },
       { property: "og:title", content: "Tópico da comunidade — FIREHELP" },
       {
         property: "og:description",
-        content: "Comente, responda e ajude outras pessoas com informações confiáveis.",
+        content: "Comente, responda e ajude moradores de Saquarema com informações confiáveis.",
       },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TopicPage,

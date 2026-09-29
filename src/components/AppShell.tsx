@@ -111,8 +111,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 text-sm text-muted-foreground">
           <Logo />
           <p className="max-w-2xl">
-            FIREHELP — Informação que protege. Comunidade que ajuda. Plataforma comunitária de
-            informação; não substitui os serviços oficiais de emergência (Bombeiros 193).
+            FIREHELP Saquarema — Informação que protege. Comunidade que ajuda. Plataforma
+            comunitária de informação; não substitui os serviços oficiais de emergência
+            (Bombeiros 193).
           </p>
         </div>
       </footer>
