@@ -12,13 +12,15 @@ export const Route = createFileRoute("/auth")({
       { title: "Entrar — FIREHELP" },
       {
         name: "description",
-        content: "Acesse o FIREHELP com sua conta Google para reportar incêndios e participar do fórum.",
+        content: "Acesse o FIREHELP para reportar incêndios e participar da comunidade de Saquarema.",
       },
       { property: "og:title", content: "Entrar no FIREHELP" },
       {
         property: "og:description",
-        content: "Acesse com sua conta Google e ajude a proteger sua comunidade.",
+        content: "Acesse com sua conta Google e ajude a proteger Saquarema.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,
@@ -54,7 +56,7 @@ function AuthPage() {
           </h1>
           <p className="max-w-md text-white/75">
             Reporte focos de incêndio em segundos, acompanhe ocorrências no mapa e troque
-            informações de prevenção com pessoas da sua região.
+            informações de prevenção com moradores de Saquarema.
           </p>
         </div>
         <p className="text-xs text-white/60">

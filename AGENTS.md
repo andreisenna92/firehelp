@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Centralize a localização municipal em constantes compartilhadas; o FIREHELP atende Saquarema, RJ, e mapas devem usar esse centro por padrão.

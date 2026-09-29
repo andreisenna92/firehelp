@@ -11,13 +11,15 @@ export const Route = createFileRoute("/noticias/$slug")({
       { title: "Notícia — FIREHELP" },
       {
         name: "description",
-        content: "Leia a notícia completa publicada no FIREHELP sobre prevenção e incêndios.",
+        content: "Leia a notícia completa do FIREHELP Saquarema sobre prevenção e incêndios.",
       },
       { property: "og:title", content: "Notícia — FIREHELP" },
       {
         property: "og:description",
-        content: "Conteúdo de prevenção, alerta e informação comunitária sobre incêndios.",
+        content: "Conteúdo de prevenção, alerta e informação comunitária para Saquarema.",
       },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: NewsArticle,

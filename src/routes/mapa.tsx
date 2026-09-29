@@ -19,17 +19,19 @@ import {
 export const Route = createFileRoute("/mapa")({
   head: () => ({
     meta: [
-      { title: "Mapa de ocorrências — FIREHELP" },
+      { title: "Mapa de incêndios em Saquarema — FIREHELP" },
       {
         name: "description",
         content:
-          "Mapa interativo com focos de incêndio reportados pela comunidade, filtros por status e tipo de ocorrência.",
+          "Mapa interativo com focos de incêndio reportados pela comunidade de Saquarema, RJ.",
       },
-      { property: "og:title", content: "Mapa de ocorrências — FIREHELP" },
+      { property: "og:title", content: "Mapa de incêndios em Saquarema — FIREHELP" },
       {
         property: "og:description",
-        content: "Veja focos de incêndio ativos, reportados e resolvidos na sua região.",
+        content: "Veja focos de incêndio ativos, reportados e resolvidos em Saquarema.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: MapPage,
@@ -60,7 +62,7 @@ function MapPage() {
       <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold md:text-3xl">Mapa de ocorrências</h1>
+            <h1 className="text-2xl font-bold md:text-3xl">Mapa de ocorrências em Saquarema</h1>
             <p className="text-sm text-muted-foreground">
               {isLoading ? "Carregando ocorrências..." : `${filtered.length} ocorrência(s) exibida(s)`}
             </p>
@@ -93,7 +95,7 @@ function MapPage() {
               longitude: r.longitude,
               status: r.status as FireStatus,
             }))}
-            zoom={11}
+            zoom={12}
             renderPopup={(id) => {
               const report = byId.get(id);
               if (!report) return null;

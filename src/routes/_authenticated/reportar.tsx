@@ -11,21 +11,29 @@ import { SafetyNotice } from "@/components/SafetyNotice";
 import { FireMap } from "@/components/map/FireMap";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { FIRE_SEVERITIES, FIRE_TYPES, type FireSeverity, type FireType } from "@/lib/firehelp";
+import {
+  FIRE_SEVERITIES,
+  FIRE_TYPES,
+  SAQUAREMA_CENTER,
+  type FireSeverity,
+  type FireType,
+} from "@/lib/firehelp";
 
 export const Route = createFileRoute("/_authenticated/reportar")({
   head: () => ({
     meta: [
-      { title: "Reportar incêndio — FIREHELP" },
+      { title: "Reportar incêndio em Saquarema — FIREHELP" },
       {
         name: "description",
-        content: "Registre um foco de incêndio em poucos passos: tipo, foto, localização e descrição.",
+        content: "Registre um foco de incêndio em Saquarema: tipo, foto, localização e descrição.",
       },
-      { property: "og:title", content: "Reportar incêndio — FIREHELP" },
+      { property: "og:title", content: "Reportar incêndio em Saquarema — FIREHELP" },
       {
         property: "og:description",
-        content: "Registre uma ocorrência e ajude sua comunidade a reagir mais rápido.",
+        content: "Registre uma ocorrência e ajude a comunidade de Saquarema a reagir mais rápido.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ReportPage,
@@ -159,7 +167,7 @@ function ReportPage() {
     <AppShell>
       <form onSubmit={handleSubmit} className="mx-auto w-full max-w-2xl space-y-6 px-4 py-8">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold md:text-3xl">🚨 Reportar incêndio</h1>
+          <h1 className="text-2xl font-bold md:text-3xl">🚨 Reportar incêndio em Saquarema</h1>
           <p className="text-sm text-muted-foreground">
             Se você estiver em perigo, afaste-se do local e procure ajuda das autoridades.
           </p>
@@ -235,13 +243,13 @@ function ReportPage() {
               Usar minha localização
             </Button>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPin className="size-3.5" /> ou toque no mapa para marcar o ponto
+             <MapPin className="size-3.5" /> ou toque no mapa de Saquarema para marcar o ponto
             </span>
           </div>
           <div className="mt-3 h-64 overflow-hidden rounded-xl border border-border">
             <FireMap
               picked={coords}
-              center={coords ? [coords.lat, coords.lng] : [-23.55, -46.63]}
+              center={coords ? [coords.lat, coords.lng] : SAQUAREMA_CENTER}
               zoom={coords ? 15 : 11}
               onPick={(next) => {
                 setCoords(next);
@@ -261,7 +269,7 @@ function ReportPage() {
           <Textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder="O que você está vendo? Ex.: fumaça densa em área de mata próxima a casas."
+            placeholder="O que você está vendo? Ex.: fumaça densa em área de mata próxima a casas em Itaúna."
             rows={4}
           />
         </Field>

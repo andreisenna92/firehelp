@@ -19,17 +19,19 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FIREHELP — Ajude a proteger sua comunidade" },
+      { title: "FIREHELP Saquarema — Incêndios e prevenção" },
       {
         name: "description",
         content:
-          "Informe incêndios, acompanhe ocorrências no mapa e compartilhe informações de prevenção com a sua comunidade.",
+          "Informe incêndios, acompanhe ocorrências no mapa e compartilhe prevenção com a comunidade de Saquarema.",
       },
-      { property: "og:title", content: "FIREHELP — Ajude a proteger sua comunidade" },
+      { property: "og:title", content: "FIREHELP Saquarema — Incêndios e prevenção" },
       {
         property: "og:description",
-        content: "Informe incêndios, acompanhe ocorrências e compartilhe informações importantes.",
+        content: "Informe incêndios e acompanhe ocorrências em Saquarema, Rio de Janeiro.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -48,14 +50,14 @@ function Dashboard() {
         <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-14 md:grid-cols-[1.2fr_1fr] md:items-center md:py-20">
           <div className="space-y-5">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider">
-              <Activity className="size-3.5" /> Rede comunitária de prevenção
+              <Activity className="size-3.5" /> Rede comunitária de Saquarema
             </span>
             <h1 className="text-4xl font-extrabold leading-tight md:text-5xl">
-              Ajude a proteger sua comunidade.
+              Ajude a proteger Saquarema.
             </h1>
             <p className="max-w-xl text-white/75">
               Informe incêndios, acompanhe ocorrências e compartilhe informações importantes com
-              outras pessoas.
+              moradores de Saquarema.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="xl" variant="hero">
@@ -79,7 +81,7 @@ function Dashboard() {
                 longitude: r.longitude,
                 status: r.status as FireStatus,
               }))}
-              zoom={10}
+              zoom={12}
             />
           </div>
         </div>
