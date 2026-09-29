@@ -88,10 +88,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin: roles.includes("admin"),
       loading,
       signInWithGoogle: async () => {
+        const redirectTo =
+          import.meta.env["VITE_SUPABASE_REDIRECT_URL"] ||
+          import.meta.env["NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL"] ||
+          process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
+          window.location.origin;
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: window.location.origin,
+            redirectTo,
           },
         });
         if (error) return { error: error.message };
