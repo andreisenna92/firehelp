@@ -167,7 +167,7 @@ function ReportPage() {
     <AppShell>
       <form onSubmit={handleSubmit} className="mx-auto w-full max-w-2xl space-y-6 px-4 py-8">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold md:text-3xl">🚨 Reportar incêndio</h1>
+          <h1 className="text-2xl font-bold md:text-3xl">🚨 Reportar incêndio em Saquarema</h1>
           <p className="text-sm text-muted-foreground">
             Se você estiver em perigo, afaste-se do local e procure ajuda das autoridades.
           </p>
@@ -243,7 +243,7 @@ function ReportPage() {
               Usar minha localização
             </Button>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPin className="size-3.5" /> ou toque no mapa para marcar o ponto
+             <MapPin className="size-3.5" /> ou toque no mapa de Saquarema para marcar o ponto
             </span>
           </div>
           <div className="mt-3 h-64 overflow-hidden rounded-xl border border-border">
@@ -269,7 +269,7 @@ function ReportPage() {
           <Textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder="O que você está vendo? Ex.: fumaça densa em área de mata próxima a casas."
+            placeholder="O que você está vendo? Ex.: fumaça densa em área de mata próxima a casas em Itaúna."
             rows={4}
           />
         </Field>

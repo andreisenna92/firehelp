@@ -2,7 +2,7 @@
 
 **Informação que protege. Comunidade que ajuda.**
 
-Plataforma comunitária de prevenção, informação e comunicação sobre incêndios:
+Plataforma comunitária de Saquarema, RJ, para prevenção, informação e comunicação sobre incêndios:
 mapa de ocorrências, registro de incêndios com foto e localização, notícias,
 fórum e painel de moderação.
 
@@ -13,7 +13,7 @@ fórum e painel de moderação.
 
 - Login com Google (perfil criado automaticamente no primeiro acesso)
 - Dashboard com estatísticas da comunidade, últimas ocorrências e notícias
-- Mapa interativo com filtros por status e tipo de incêndio
+- Mapa interativo de Saquarema com filtros por status e tipo de incêndio
 - Registro de ocorrência com tipo, gravidade, descrição, fotos e ponto no mapa
 - Notícias por categoria com página de leitura completa
 - Fórum com tópicos, respostas aninhadas, curtidas e denúncia de conteúdo
