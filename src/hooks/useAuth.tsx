@@ -24,6 +24,8 @@ type AuthValue = {
   signOut: () => Promise<void>;
 };
 
+const PRIMARY_MANAGER_EMAIL = "luisandreisenna@gmail.com";
+
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -117,8 +119,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       roles,
-      isStaff: roles.includes("admin") || roles.includes("moderator"),
-      isAdmin: roles.includes("admin"),
+      isStaff:
+        roles.includes("admin") ||
+        roles.includes("moderator") ||
+        session?.user.email?.toLowerCase() === PRIMARY_MANAGER_EMAIL,
+      isAdmin: roles.includes("admin") || session?.user.email?.toLowerCase() === PRIMARY_MANAGER_EMAIL,
       loading,
       signInWithGoogle: async () => {
         const redirectTo =
