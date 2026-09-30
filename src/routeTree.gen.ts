@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MapaRouteImport } from './routes/mapa'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedMembrosRouteImport } from './routes/_authenticated/membros'
+import { Route as AuthenticatedMensagensRouteImport } from './routes/_authenticated/mensagens'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedReportarRouteImport } from './routes/_authenticated/reportar'
 import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
@@ -43,6 +45,16 @@ const MapaRoute = MapaRouteImport.update({
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMembrosRoute = AuthenticatedMembrosRouteImport.update({
+  id: '/membros',
+  path: '/membros',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMensagensRoute = AuthenticatedMensagensRouteImport.update({
+  id: '/mensagens',
+  path: '/mensagens',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
@@ -81,6 +93,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/membros': typeof AuthenticatedMembrosRoute
+  '/mensagens': typeof AuthenticatedMensagensRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/reportar': typeof AuthenticatedReportarRoute
   '/comunidade/$postId': typeof ComunidadePostIdRoute
@@ -93,6 +107,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/membros': typeof AuthenticatedMembrosRoute
+  '/mensagens': typeof AuthenticatedMensagensRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/reportar': typeof AuthenticatedReportarRoute
   '/comunidade/$postId': typeof ComunidadePostIdRoute
@@ -107,6 +123,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/mapa': typeof MapaRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/membros': typeof AuthenticatedMembrosRoute
+  '/_authenticated/mensagens': typeof AuthenticatedMensagensRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/reportar': typeof AuthenticatedReportarRoute
   '/comunidade/$postId': typeof ComunidadePostIdRoute
@@ -121,6 +139,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mapa'
     | '/admin'
+    | '/membros'
+    | '/mensagens'
     | '/perfil'
     | '/reportar'
     | '/comunidade/$postId'
@@ -133,6 +153,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mapa'
     | '/admin'
+    | '/membros'
+    | '/mensagens'
     | '/perfil'
     | '/reportar'
     | '/comunidade/$postId'
@@ -146,6 +168,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mapa'
     | '/_authenticated/admin'
+    | '/_authenticated/membros'
+    | '/_authenticated/mensagens'
     | '/_authenticated/perfil'
     | '/_authenticated/reportar'
     | '/comunidade/$postId'
@@ -202,6 +226,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/membros': {
+      id: '/_authenticated/membros'
+      path: '/membros'
+      fullPath: '/membros'
+      preLoaderRoute: typeof AuthenticatedMembrosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mensagens': {
+      id: '/_authenticated/mensagens'
+      path: '/mensagens'
+      fullPath: '/mensagens'
+      preLoaderRoute: typeof AuthenticatedMensagensRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -249,12 +287,16 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedMembrosRoute: typeof AuthenticatedMembrosRoute
+  AuthenticatedMensagensRoute: typeof AuthenticatedMensagensRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedReportarRoute: typeof AuthenticatedReportarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedMembrosRoute: AuthenticatedMembrosRoute,
+  AuthenticatedMensagensRoute: AuthenticatedMensagensRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedReportarRoute: AuthenticatedReportarRoute,
 }

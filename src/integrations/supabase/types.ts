@@ -124,6 +124,41 @@ export type Database = {
         }
         Relationships: []
       }
+      fire_status_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          fire_report_id: string
+          id: string
+          new_status: Database["public"]["Enums"]["fire_status"]
+          old_status: Database["public"]["Enums"]["fire_status"] | null
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          fire_report_id: string
+          id?: string
+          new_status: Database["public"]["Enums"]["fire_status"]
+          old_status?: Database["public"]["Enums"]["fire_status"] | null
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          fire_report_id?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["fire_status"]
+          old_status?: Database["public"]["Enums"]["fire_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fire_status_history_fire_report_id_fkey"
+            columns: ["fire_report_id"]
+            isOneToOne: false
+            referencedRelation: "fire_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_comments: {
         Row: {
           author_name: string | null
@@ -215,8 +250,10 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_url: string | null
           is_demo: boolean
           title: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
@@ -225,8 +262,10 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_url?: string | null
           is_demo?: boolean
           title: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
@@ -235,9 +274,38 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           is_demo?: boolean
           title?: string
+          updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
         }
         Relationships: []
       }
@@ -292,27 +360,33 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           blocked: boolean
           created_at: string
           email: string | null
           full_name: string
           id: string
+          last_seen_at: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           blocked?: boolean
           created_at?: string
           email?: string | null
           full_name?: string
           id: string
+          last_seen_at?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           blocked?: boolean
           created_at?: string
           email?: string | null
           full_name?: string
           id?: string
+          last_seen_at?: string | null
         }
         Relationships: []
       }
@@ -366,6 +440,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_blocked: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {

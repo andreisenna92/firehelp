@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { AdminUsers } from "@/components/admin/AdminUsers";
+import { AdminPostEditor } from "@/components/admin/AdminPostEditor";
 import { useForumPosts, useNews, useReports } from "@/hooks/useFirehelp";
 import {
   FIRE_STATUSES,
@@ -75,6 +77,7 @@ function AdminPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [category, setCategory] = useState<NewsCategory>("prevencao");
   const [savingNews, setSavingNews] = useState(false);
+  const [editing, setEditing] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -191,6 +194,7 @@ function AdminPage() {
             <TabsTrigger value="noticias">Notícias</TabsTrigger>
             <TabsTrigger value="forum">Fórum</TabsTrigger>
             <TabsTrigger value="denuncias">Denúncias</TabsTrigger>
+            <TabsTrigger value="usuarios">Usuários</TabsTrigger>
           </TabsList>
 
           <TabsContent value="ocorrencias" className="space-y-3 pt-4">
@@ -309,11 +313,23 @@ function AdminPage() {
                     {post.author_name ?? "Membro"} · {formatDateTime(post.created_at)}
                   </p>
                 </div>
-                <Button size="sm" variant="destructive" onClick={() => deletePost(post.id)}>
-                  Remover
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setEditing(post.id)}>
+                    Editar
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => deletePost(post.id)}>
+                    Remover
+                  </Button>
+                </div>
+                {editing === post.id && (
+                  <AdminPostEditor post={post} onDone={() => setEditing(null)} />
+                )}
               </div>
             ))}
+          </TabsContent>
+
+          <TabsContent value="usuarios" className="pt-4">
+            <AdminUsers />
           </TabsContent>
 
           <TabsContent value="denuncias" className="space-y-2 pt-4">
