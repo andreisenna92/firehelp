@@ -134,7 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {};
       },
       signInWithPassword: async ({ cpf, email, password }) => {
-        const normalizedCpf = cpf.replace(/\\D/g, "");
+        const normalizedCpf = cpf.replace(/\D/g, "");
         if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error || !data.user) return { error: "CPF, e-mail ou senha inválidos." };
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {};
       },
       signUpWithPassword: async ({ cpf, email, password, fullName }) => {
-        const normalizedCpf = cpf.replace(/\\D/g, "");
+        const normalizedCpf = cpf.replace(/\D/g, "");
         if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
         if (password.length < 6) return { error: "A senha deve ter pelo menos 6 caracteres." };
         const { data, error } = await supabase.auth.signUp({
