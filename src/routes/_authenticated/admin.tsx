@@ -262,17 +262,28 @@ function AdminPage() {
                   </span>
                 </div>
                 {report.description && <p className="text-sm">{report.description}</p>}
-                <div className="flex flex-wrap gap-2">
-                  {FIRE_STATUSES.map((status) => (
-                    <Button
-                      key={status.value}
-                      size="sm"
-                      variant={report.status === status.value ? "default" : "outline"}
-                      onClick={() => updateStatus(report.id, status.value)}
-                    >
-                      {status.label}
-                    </Button>
-                  ))}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Alterar status da ocorrência
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {FIRE_STATUSES.map((status) => {
+                      const isCurrent = report.status === status.value;
+                      return (
+                        <Button
+                          key={status.value}
+                          type="button"
+                          size="sm"
+                          variant={isCurrent ? "default" : "outline"}
+                          aria-pressed={isCurrent}
+                          disabled={isCurrent}
+                          onClick={() => updateStatus(report.id, status.value)}
+                        >
+                          {status.label}
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ))}
