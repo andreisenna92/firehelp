@@ -154,15 +154,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const normalizedCpf = cpf.replace(/\D/g, "");
         if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
         if (password.length < 6) return { error: "A senha deve ter pelo menos 6 caracteres." };
+        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedName = fullName.trim();
+        if (!normalizedName) return { error: "Informe seu nome completo." };
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: normalizedEmail,
           password,
           options: {
-            data: { cpf: normalizedCpf, full_name: fullName },
+            data: { cpf: normalizedCpf, full_name: normalizedName },
             emailRedirectTo: `${window.location.origin}/auth`,
           },
         });
-        if (error) return { error: "Não foi possível criar sua conta. Verifique os dados." };
+        if (error) {
+          const errorCode = error.code?.toLowerCase() ?? "";
+          const errorMessage = error.message.toLowerCase();
+          if (errorCode === "user_already_exists" || errorMessage.includes("already registered") || errorMessage.includes("already exists")) {
+            return { error: "Este e-mail já possui uma conta. Use a opção de entrar." };
+          }
+          if (errorCode === "email_address_invalid" || errorMessage.includes("invalid email")) {
+            return { error: "Informe um e-mail válido." };
+          }
+          if (errorCode === "weak_password" || errorMessage.includes("password should be at least")) {
+            return { error: "A senha deve ter pelo menos 6 caracteres." };
+          }
+          if (errorCode === "over_email_send_rate_limit" || errorMessage.includes("rate limit")) {
+            return { error: "Muitas tentativas. Aguarde alguns minutos e tente novamente." };
+          }
+          return { error: "Não foi possível criar sua conta agora. Verifique o e-mail e tente novamente." };
+        }
         return { needsConfirmation: !data.session };
       },
       signOut: async () => {
