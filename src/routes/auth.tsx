@@ -69,7 +69,7 @@ function AuthPage() {
           <div className="space-y-2"><Label htmlFor="password">Senha</Label><Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required aria-describedby="password-help" /><p id="password-help" className="text-xs text-muted-foreground">Use pelo menos 6 caracteres ({password.length}/6).</p></div>
           <Button size="xl" className="w-full" disabled={busy || (isSignup && password.length < 6)}>{busy ? "Aguarde..." : isSignup ? "Criar conta" : "Entrar"}</Button>
         </form>
-        <button type="button" className="w-full text-center text-sm text-primary underline underline-offset-4" onClick={() => setIsSignup((value) => !value)}>{isSignup ? "Já tenho uma conta" : "Ainda não sou membro — criar conta"}</button>
+        <button type="button" className="w-full text-center text-sm font-medium text-primary underline underline-offset-4" onClick={() => { setIsSignup((value) => !value); window.scrollTo({ top: 0, behavior: "smooth" }); }}>{isSignup ? "Já tenho uma conta — entrar" : "Criar conta de membro"}</button>
         <SafetyNotice /><p className="text-center text-sm text-muted-foreground"><Link to="/" className="underline underline-offset-4 hover:text-foreground">Explorar sem entrar</Link></p>
       </div></div>
     </div>

@@ -165,6 +165,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             emailRedirectTo: `${window.location.origin}/auth`,
           },
         });
+        if (!error && data.user && data.user.identities?.length === 0) {
+          return { error: "Este e-mail já possui uma conta. Use a aba de login." };
+        }
         if (error) {
           const errorCode = error.code?.toLowerCase() ?? "";
           const errorMessage = error.message.toLowerCase();
