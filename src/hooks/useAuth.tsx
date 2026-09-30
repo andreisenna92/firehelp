@@ -24,6 +24,8 @@ type AuthValue = {
   signOut: () => Promise<void>;
 };
 
+const PRIMARY_MANAGER_EMAIL = "luisandreisenna@gmail.com";
+
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -117,8 +119,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       roles,
-      isStaff: roles.includes("admin") || roles.includes("moderator"),
-      isAdmin: roles.includes("admin"),
+      isStaff:
+        roles.includes("admin") ||
+        roles.includes("moderator") ||
+        session?.user.email?.toLowerCase() === PRIMARY_MANAGER_EMAIL,
+      isAdmin: roles.includes("admin") || session?.user.email?.toLowerCase() === PRIMARY_MANAGER_EMAIL,
       loading,
       signInWithGoogle: async () => {
         const redirectTo =
@@ -134,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {};
       },
       signInWithPassword: async ({ cpf, email, password }) => {
-        const normalizedCpf = cpf.replace(/\\D/g, "");
+        const normalizedCpf = cpf.replace(/\D/g, "");
         if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error || !data.user) return { error: "CPF, e-mail ou senha inválidos." };
@@ -146,7 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {};
       },
       signUpWithPassword: async ({ cpf, email, password, fullName }) => {
-        const normalizedCpf = cpf.replace(/\\D/g, "");
+        const normalizedCpf = cpf.replace(/\D/g, "");
         if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
         if (password.length < 6) return { error: "A senha deve ter pelo menos 6 caracteres." };
         const { data, error } = await supabase.auth.signUp({
