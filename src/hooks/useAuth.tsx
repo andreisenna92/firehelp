@@ -64,14 +64,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const [profileRes, rolesRes] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id, full_name, email, avatar_url, created_at")
+          .select("id, full_name, avatar_url, created_at, blocked")
           .eq("id", userId)
           .maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
       if (!active) return;
-      setProfile((profileRes.data as Profile | null) ?? null);
+      if (profileRes.data?.blocked) {
+        await supabase.auth.signOut();
+        if (typeof window !== "undefined") {
+          window.alert("Sua conta está suspensa. Entre em contato com a gestão do FIREHELP.");
+        }
+        return;
+      }
+      setProfile(
+        profileRes.data
+          ? { ...profileRes.data, email: session?.user.email ?? null }
+          : null,
+      );
       setRoles((rolesRes.data ?? []).map((r) => r.role as string));
+      void supabase.from("profiles").update({ last_seen_at: new Date().toISOString() }).eq("id", userId);
     })();
     return () => {
       active = false;
