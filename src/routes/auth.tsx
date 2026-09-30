@@ -66,8 +66,8 @@ function AuthPage() {
           {isSignup && <div className="space-y-2"><Label htmlFor="fullName">Nome completo</Label><Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>}
           <div className="space-y-2"><Label htmlFor="cpf">CPF</Label><Input id="cpf" inputMode="numeric" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} required /></div>
           <div className="space-y-2"><Label htmlFor="email">E-mail</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-          <div className="space-y-2"><Label htmlFor="password">Senha</Label><Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required /></div>
-          <Button size="xl" className="w-full" disabled={busy}>{busy ? "Aguarde..." : isSignup ? "Criar conta" : "Entrar"}</Button>
+          <div className="space-y-2"><Label htmlFor="password">Senha</Label><Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required aria-describedby="password-help" /><p id="password-help" className="text-xs text-muted-foreground">Use pelo menos 6 caracteres ({password.length}/6).</p></div>
+          <Button size="xl" className="w-full" disabled={busy || (isSignup && password.length < 6)}>{busy ? "Aguarde..." : isSignup ? "Criar conta" : "Entrar"}</Button>
         </form>
         <button type="button" className="w-full text-center text-sm text-primary underline underline-offset-4" onClick={() => setIsSignup((value) => !value)}>{isSignup ? "Já tenho uma conta" : "Ainda não sou membro — criar conta"}</button>
         <SafetyNotice /><p className="text-center text-sm text-muted-foreground"><Link to="/" className="underline underline-offset-4 hover:text-foreground">Explorar sem entrar</Link></p>
