@@ -104,14 +104,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           import.meta.env["VITE_SUPABASE_REDIRECT_URL"] ||
           import.meta.env["NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL"] ||
           process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
-          window.location.origin;
+          `${window.location.origin}/auth`;
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
-          options: {
-            redirectTo,
-          },
+          options: { redirectTo },
         });
-        if (error) return { error: error.message };
+        if (error) return { error: "Não foi possível iniciar o login com Google." };
         return {};
       },
       signOut: async () => {
