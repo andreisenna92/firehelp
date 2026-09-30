@@ -171,8 +171,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error) {
           const errorCode = error.code?.toLowerCase() ?? "";
           const errorMessage = error.message.toLowerCase();
-          if (errorCode === "user_already_exists" || errorMessage.includes("already registered") || errorMessage.includes("already exists")) {
-            return { error: "Este e-mail já possui uma conta. Use a opção de entrar." };
+          if (
+            errorCode === "user_already_exists" ||
+            errorCode === "email_exists" ||
+            errorMessage.includes("already registered") ||
+            errorMessage.includes("already exists") ||
+            errorMessage.includes("user already registered")
+          ) {
+            return { error: "Este e-mail já possui uma conta. Use a aba Entrar com a mesma senha." };
           }
           if (errorCode === "email_address_invalid" || errorMessage.includes("invalid email")) {
             return { error: "Informe um e-mail válido." };
@@ -180,10 +186,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (errorCode === "weak_password" || errorMessage.includes("password should be at least")) {
             return { error: "A senha deve ter pelo menos 6 caracteres." };
           }
-          if (errorCode === "over_email_send_rate_limit" || errorMessage.includes("rate limit")) {
-            return { error: "Muitas tentativas. Aguarde alguns minutos e tente novamente." };
+          if (errorCode === "over_email_send_rate_limit" || errorMessage.includes("rate limit") || errorMessage.includes("too many requests")) {
+            return { error: "O limite de envio de e-mails foi atingido. Aguarde alguns minutos antes de tentar novamente." };
           }
-          return { error: "Não foi possível criar sua conta agora. Verifique o e-mail e tente novamente." };
+          if (errorCode === "signup_disabled" || errorMessage.includes("signups not allowed")) {
+            return { error: "O cadastro está temporariamente desativado no serviço de autenticação." };
+          }
+          if (errorMessage.includes("database error saving new user")) {
+            return { error: "O cadastro foi bloqueado pela configuração do banco. É necessário corrigir a tabela de perfis no Supabase." };
+          }
+          return { error: "Não foi possível criar sua conta agora. Tente outro e-mail ou entre com uma conta já criada." };
         }
         return { needsConfirmation: !data.session };
       },
