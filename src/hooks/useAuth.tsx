@@ -61,6 +61,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     void (async () => {
+      const currentUser = session?.user;
+      const metadata = currentUser?.user_metadata ?? {};
+      const fullName =
+        metadata.full_name ||
+        metadata.name ||
+        currentUser?.email?.split("@")[0] ||
+        "Membro FIREHELP";
+      const avatarUrl = metadata.avatar_url || metadata.picture || null;
+
+      await supabase.from("profiles").upsert(
+        {
+          id: userId,
+          full_name: fullName,
+          email: currentUser?.email ?? null,
+          avatar_url: avatarUrl,
+        },
+        { onConflict: "id", ignoreDuplicates: true },
+      );
+
       const [profileRes, rolesRes] = await Promise.all([
         supabase
           .from("profiles")

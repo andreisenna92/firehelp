@@ -43,8 +43,9 @@ function MembersPage() {
       return data ?? [];
     },
   });
-  const rows = (members.data ?? []).filter((m) =>
-    m.full_name.toLowerCase().includes(q.toLowerCase()),
+  const allMembers = members.data ?? [];
+  const rows = allMembers.filter((m) =>
+    (m.full_name ?? "Membro FIREHELP").toLowerCase().includes(q.toLowerCase()),
   );
 
   return (
@@ -59,8 +60,10 @@ function MembersPage() {
             <p className="mt-1 text-sm text-muted-foreground">Encontre vizinhos e converse com segurança.</p>
           </div>
           <div className="text-left md:text-right">
-            <p className="text-2xl font-bold">{rows.length}</p>
-            <p className="text-xs text-muted-foreground">membros encontrados</p>
+            <p className="text-2xl font-bold">{allMembers.length}</p>
+            <p className="text-xs text-muted-foreground">
+              {q ? `${rows.length} encontrados` : "membros cadastrados"}
+            </p>
           </div>
         </div>
         <div className="relative">
@@ -72,10 +75,10 @@ function MembersPage() {
             <div key={m.id} className="surface-card flex items-center gap-3 p-4">
               <Avatar className="size-11">
                 <AvatarImage src={m.avatar_url ?? undefined} />
-                <AvatarFallback>{m.full_name.slice(0, 1)}</AvatarFallback>
+                <AvatarFallback>{(m.full_name || "M").slice(0, 1).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{m.full_name}</p>
+                <p className="truncate font-semibold">{m.full_name || "Membro FIREHELP"}</p>
                 <p className="text-xs text-muted-foreground">
                   {isOnline(m.last_seen_at) ? "Ativo recentemente" : `Membro desde ${formatDate(m.created_at)}`}
                 </p>
