@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Search, Users } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,27 +43,42 @@ function MembersPage() {
       return data ?? [];
     },
   });
-  const rows = (members.data ?? []).filter((m) =>
-    m.full_name.toLowerCase().includes(q.toLowerCase()),
+  const allMembers = members.data ?? [];
+  const rows = allMembers.filter((m) =>
+    (m.full_name ?? "Membro FIREHELP").toLowerCase().includes(q.toLowerCase()),
   );
 
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-4xl space-y-5 px-4 py-8">
-        <div>
-          <h1 className="text-2xl font-bold md:text-3xl">Membros da comunidade</h1>
-          <p className="text-sm text-muted-foreground">Encontre vizinhos e converse com eles.</p>
+        <div className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-sm md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              <Users className="size-3.5" /> Comunidade FIREHELP
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Membros da comunidade</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Encontre vizinhos e converse com segurança.</p>
+          </div>
+          <div className="text-left md:text-right">
+            <p className="text-2xl font-bold">{allMembers.length}</p>
+            <p className="text-xs text-muted-foreground">
+              {q ? `${rows.length} encontrados` : "membros cadastrados"}
+            </p>
+          </div>
         </div>
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por nome" />
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input className="pl-9" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por nome" aria-label="Buscar membros por nome" />
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {rows.map((m) => (
             <div key={m.id} className="surface-card flex items-center gap-3 p-4">
               <Avatar className="size-11">
                 <AvatarImage src={m.avatar_url ?? undefined} />
-                <AvatarFallback>{m.full_name.slice(0, 1)}</AvatarFallback>
+                <AvatarFallback>{(m.full_name || "M").slice(0, 1).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{m.full_name}</p>
+                <p className="truncate font-semibold">{m.full_name || "Membro FIREHELP"}</p>
                 <p className="text-xs text-muted-foreground">
                   {isOnline(m.last_seen_at) ? "Ativo recentemente" : `Membro desde ${formatDate(m.created_at)}`}
                 </p>
