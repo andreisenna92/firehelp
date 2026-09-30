@@ -78,6 +78,7 @@ function AdminPage() {
   const [category, setCategory] = useState<NewsCategory>("prevencao");
   const [savingNews, setSavingNews] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
+  const [editingNews, setEditingNews] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -147,6 +148,52 @@ function AdminPage() {
     setSummary("");
     setContent("");
     setImageUrl("");
+    void queryClient.invalidateQueries({ queryKey: ["news"] });
+  }
+
+  function startEditingNews(item: NonNullable<typeof news.data>[number]) {
+    setEditingNews(item.id);
+    setTitle(item.title);
+    setSummary(item.summary ?? "");
+    setContent(item.content);
+    setImageUrl(item.image_url ?? "");
+    setCategory(item.category as NewsCategory);
+  }
+
+  function cancelEditingNews() {
+    setEditingNews(null);
+    setTitle("");
+    setSummary("");
+    setContent("");
+    setImageUrl("");
+    setCategory("prevencao");
+  }
+
+  async function updateNews(event: React.FormEvent) {
+    event.preventDefault();
+    if (!editingNews || !title.trim() || !content.trim()) {
+      toast.error("Título e conteúdo são obrigatórios.");
+      return;
+    }
+    setSavingNews(true);
+    const { error } = await supabase
+      .from("news")
+      .update({
+        title: title.trim(),
+        summary: summary.trim() || null,
+        content: content.trim(),
+        image_url: imageUrl.trim() || null,
+        category,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", editingNews);
+    setSavingNews(false);
+    if (error) {
+      toast.error("Não foi possível atualizar o conteúdo.");
+      return;
+    }
+    toast.success(category === "alertas" ? "Alerta atualizado." : "Notícia atualizada.");
+    cancelEditingNews();
     void queryClient.invalidateQueries({ queryKey: ["news"] });
   }
 
@@ -232,8 +279,8 @@ function AdminPage() {
           </TabsContent>
 
           <TabsContent value="noticias" className="space-y-4 pt-4">
-            <form onSubmit={createNews} className="surface-card space-y-3 p-4">
-              <h2 className="font-semibold">Nova notícia</h2>
+            <form onSubmit={editingNews ? updateNews : createNews} className="surface-card space-y-3 p-4">
+              <h2 className="font-semibold">{editingNews ? "Editar notícia ou alerta" : "Nova notícia ou alerta"}</h2>
               <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Título" />
               <Input
                 value={summary}
@@ -267,9 +314,16 @@ function AdminPage() {
                   </button>
                 ))}
               </div>
-              <Button type="submit" disabled={savingNews}>
-                {savingNews ? "Publicando..." : "Publicar notícia"}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button type="submit" disabled={savingNews}>
+                  {savingNews ? "Salvando..." : editingNews ? "Salvar alterações" : category === "alertas" ? "Publicar alerta" : "Publicar notícia"}
+                </Button>
+                {editingNews && (
+                  <Button type="button" variant="ghost" onClick={cancelEditingNews}>
+                    Cancelar edição
+                  </Button>
+                )}
+              </div>
             </form>
 
             <div className="space-y-2">
@@ -285,6 +339,9 @@ function AdminPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => startEditingNews(item)}>
+                      Editar
+                    </Button>
                     <Button
                       size="sm"
                       variant="outline"
