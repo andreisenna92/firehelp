@@ -20,6 +20,8 @@ const desktopNav = [
   { to: "/noticias", label: "Notícias", icon: Newspaper },
   { to: "/mapa", label: "Mapa", icon: Map },
   { to: "/comunidade", label: "Fórum", icon: MessageSquare },
+  { to: "/membros", label: "Membros", icon: User },
+  { to: "/mensagens", label: "Mensagens", icon: MessageSquare },
 ] as const;
 
 const mobileNav = [
