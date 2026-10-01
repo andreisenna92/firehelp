@@ -19,12 +19,8 @@ type AuthValue = {
   isAdmin: boolean;
   loading: boolean;
   signInWithGoogle: () => Promise<{ error?: string }>;
-  signInWithPassword: (credentials: { cpf: string; email: string; password: string }) => Promise<{ error?: string }>;
-  signUpWithPassword: (credentials: { cpf: string; email: string; password: string; fullName: string }) => Promise<{ error?: string; needsConfirmation?: boolean }>;
   signOut: () => Promise<void>;
 };
-
-const PRIMARY_MANAGER_EMAIL = "luisandreisenna@gmail.com";
 
 const AuthContext = createContext<AuthValue | null>(null);
 
@@ -65,25 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     void (async () => {
-      const currentUser = session?.user;
-      const metadata = currentUser?.user_metadata ?? {};
-      const fullName =
-        metadata.full_name ||
-        metadata.name ||
-        currentUser?.email?.split("@")[0] ||
-        "Membro FIREHELP";
-      const avatarUrl = metadata.avatar_url || metadata.picture || null;
-
-      await supabase.from("profiles").upsert(
-        {
-          id: userId,
-          full_name: fullName,
-          email: currentUser?.email ?? null,
-          avatar_url: avatarUrl,
-        },
-        { onConflict: "id", ignoreDuplicates: true },
-      );
-
       const [profileRes, rolesRes] = await Promise.all([
         supabase
           .from("profiles")
@@ -119,51 +96,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       roles,
-      isStaff:
-        roles.includes("admin") ||
-        roles.includes("moderator") ||
-        session?.user.email?.toLowerCase() === PRIMARY_MANAGER_EMAIL,
-      isAdmin: roles.includes("admin") || session?.user.email?.toLowerCase() === PRIMARY_MANAGER_EMAIL,
+      isStaff: roles.includes("admin") || roles.includes("moderator"),
+      isAdmin: roles.includes("admin"),
       loading,
       signInWithGoogle: async () => {
         const redirectTo =
-          import.meta.env["VITE_SUPABASE_REDIRECT_URL"] ||
-          import.meta.env["NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL"] ||
-          process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
-          `${window.location.origin}/auth`;
+          (import.meta.env["VITE_SUPABASE_REDIRECT_URL"] as string | undefined) ||
+          window.location.origin;
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo },
-        });
-        if (error) return { error: "Não foi possível iniciar o login com Google." };
-        return {};
-      },
-      signInWithPassword: async ({ cpf, email, password }) => {
-        const normalizedCpf = cpf.replace(/\D/g, "");
-        if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error || !data.user) return { error: "CPF, e-mail ou senha inválidos." };
-        const savedCpf = String(data.user.user_metadata?.cpf ?? "").replace(/\\D/g, "");
-        if (savedCpf && savedCpf !== normalizedCpf) {
-          await supabase.auth.signOut();
-          return { error: "CPF, e-mail ou senha inválidos." };
-        }
-        return {};
-      },
-      signUpWithPassword: async ({ cpf, email, password, fullName }) => {
-        const normalizedCpf = cpf.replace(/\D/g, "");
-        if (normalizedCpf.length !== 11) return { error: "Informe um CPF válido." };
-        if (password.length < 6) return { error: "A senha deve ter pelo menos 6 caracteres." };
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
           options: {
-            data: { cpf: normalizedCpf, full_name: fullName },
-            emailRedirectTo: `${window.location.origin}/auth`,
+            redirectTo,
           },
         });
-        if (error) return { error: "Não foi possível criar sua conta. Verifique os dados." };
-        return { needsConfirmation: !data.session };
+        if (error) return { error: error.message };
+        return {};
       },
       signOut: async () => {
         await supabase.auth.signOut();

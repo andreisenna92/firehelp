@@ -41,19 +41,6 @@ export const NEWS_CATEGORIES: { value: NewsCategory; label: string }[] = [
   { value: "comunidade", label: "Comunidade" },
 ];
 
-export const NEWS_CATEGORY_IMAGES: Record<NewsCategory, string> = {
-  prevencao: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=80",
-  incendios: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80",
-  meio_ambiente: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=80",
-  seguranca: "https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=900&q=80",
-  alertas: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80",
-  comunidade: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=80",
-};
-
-export function newsImage(category: NewsCategory, imageUrl: string | null, isDemo = false) {
-  return isDemo || !imageUrl ? NEWS_CATEGORY_IMAGES[category] : imageUrl;
-}
-
 export const FORUM_CATEGORIES: { value: ForumCategory; label: string; emoji: string }[] = [
   { value: "incendios", label: "Incêndios", emoji: "🔥" },
   { value: "meio_ambiente", label: "Meio ambiente", emoji: "🌳" },

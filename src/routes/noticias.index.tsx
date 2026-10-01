@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNews } from "@/hooks/useFirehelp";
-import { NEWS_CATEGORIES, formatDate, newsImage, type NewsCategory } from "@/lib/firehelp";
+import { NEWS_CATEGORIES, formatDate } from "@/lib/firehelp";
 
 export const Route = createFileRoute("/noticias/")({
   head: () => ({
@@ -75,12 +75,14 @@ function NewsList() {
                 params={{ slug: item.slug }}
                 className="surface-card group overflow-hidden transition-shadow hover:shadow-lift"
               >
-                <img
-                  src={newsImage(item.category as NewsCategory, item.image_url, item.is_demo)}
-                  alt={item.title}
-                  className="h-40 w-full object-cover"
-                  loading="lazy"
-                />
+                {item.image_url && (
+                  <img
+                    src={item.image_url}
+                    alt={item.title}
+                    className="h-40 w-full object-cover"
+                    loading="lazy"
+                  />
+                )}
                 <div className="space-y-2 p-4">
                   <span className="inline-block rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-accent-foreground">
                     {NEWS_CATEGORIES.find((c) => c.value === item.category)?.label}

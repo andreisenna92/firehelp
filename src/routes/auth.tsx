@@ -2,8 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/hooks/useAuth";
 import { SafetyNotice } from "@/components/SafetyNotice";
@@ -29,49 +27,75 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { user, loading, signInWithPassword, signUpWithPassword } = useAuth();
+  const { user, loading, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const [isSignup, setIsSignup] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
 
   useEffect(() => {
     if (!loading && user) void navigate({ to: "/", replace: true });
   }, [user, loading, navigate]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleGoogle() {
     setBusy(true);
-    const result = isSignup
-      ? await signUpWithPassword({ cpf, email, password, fullName })
-      : await signInWithPassword({ cpf, email, password });
-    setBusy(false);
-    if (result.error) return toast.error(result.error);
-    if (result.needsConfirmation) return toast.success("Conta criada. Confirme seu e-mail para entrar.");
-    void navigate({ to: "/", replace: true });
+    const { error } = await signInWithGoogle();
+    if (error) {
+      toast.error("Não foi possível entrar com o Google. Tente novamente.");
+      setBusy(false);
+    }
   }
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hero-institutional hidden flex-col justify-between p-12 lg:flex">
-        <Logo /><div className="space-y-4"><h1 className="max-w-md text-4xl font-extrabold leading-tight">Informação que protege.<br />Comunidade que ajuda.</h1><p className="max-w-md text-white/75">Reporte focos de incêndio em segundos e ajude a proteger Saquarema.</p></div><p className="text-xs text-white/60">Em emergências, acione os Bombeiros (193) ou a Defesa Civil (199).</p>
+        <Logo />
+        <div className="space-y-4">
+          <h1 className="max-w-md text-4xl font-extrabold leading-tight">
+            Informação que protege.
+            <br />
+            Comunidade que ajuda.
+          </h1>
+          <p className="max-w-md text-white/75">
+            Reporte focos de incêndio em segundos, acompanhe ocorrências no mapa e troque
+            informações de prevenção com moradores de Saquarema.
+          </p>
+        </div>
+        <p className="text-xs text-white/60">
+          Em emergências, acione os Bombeiros (193) ou a Defesa Civil (199).
+        </p>
       </div>
-      <div className="flex items-center justify-center px-6 py-12"><div className="w-full max-w-sm space-y-6">
-        <div className="lg:hidden"><Logo /></div>
-        <div className="space-y-2"><h2 className="text-2xl font-bold">{isSignup ? "Criar conta no FIREHELP" : "Entrar no FIREHELP"}</h2><p className="text-sm text-muted-foreground">Acesse com CPF, e-mail e senha. Seu perfil vira membro automaticamente.</p></div>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {isSignup && <div className="space-y-2"><Label htmlFor="fullName">Nome completo</Label><Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>}
-          <div className="space-y-2"><Label htmlFor="cpf">CPF</Label><Input id="cpf" inputMode="numeric" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} required /></div>
-          <div className="space-y-2"><Label htmlFor="email">E-mail</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-          <div className="space-y-2"><Label htmlFor="password">Senha</Label><Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required /></div>
-          <Button size="xl" className="w-full" disabled={busy}>{busy ? "Aguarde..." : isSignup ? "Criar conta" : "Entrar"}</Button>
-        </form>
-        <button type="button" className="w-full text-center text-sm text-primary underline underline-offset-4" onClick={() => setIsSignup((value) => !value)}>{isSignup ? "Já tenho uma conta" : "Ainda não sou membro — criar conta"}</button>
-        <SafetyNotice /><p className="text-center text-sm text-muted-foreground"><Link to="/" className="underline underline-offset-4 hover:text-foreground">Explorar sem entrar</Link></p>
-      </div></div>
+
+      <div className="flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-sm space-y-6">
+          <div className="lg:hidden">
+            <Logo />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold">Entrar no FIREHELP</h2>
+            <p className="text-sm text-muted-foreground">
+              Use sua conta Google. Seu perfil é criado automaticamente no primeiro acesso.
+            </p>
+          </div>
+
+          <Button
+            size="xl"
+            variant="default"
+            className="w-full"
+            onClick={handleGoogle}
+            disabled={busy}
+          >
+            <GoogleIcon />
+            {busy ? "Conectando..." : "Entrar com Google"}
+          </Button>
+
+          <SafetyNotice />
+
+          <p className="text-center text-sm text-muted-foreground">
+            <Link to="/" className="underline underline-offset-4 hover:text-foreground">
+              Explorar sem entrar
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
