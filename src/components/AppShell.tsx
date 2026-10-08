@@ -75,7 +75,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button asChild variant="alert" size="sm" className="hidden sm:inline-flex">
+            <Button asChild variant="default" size="sm" className="hidden sm:inline-flex">
               <Link to="/reportar">
                 <Flame className="size-4" /> Reportar
               </Link>
@@ -136,7 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <span
                   className={
                     isReport
-                      ? "grid size-9 -translate-y-3 place-items-center rounded-full bg-alert text-alert-foreground shadow-lift"
+                      ? "grid size-9 -translate-y-3 place-items-center rounded-full bg-primary text-primary-foreground shadow-lift"
                       : "grid size-9 place-items-center"
                   }
                 >

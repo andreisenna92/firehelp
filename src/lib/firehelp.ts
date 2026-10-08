@@ -67,15 +67,15 @@ export function label<T extends string>(list: { value: T; label: string }[], val
 export function statusColor(status: FireStatus): string {
   switch (status) {
     case "active":
-      return "#e5484d";
+      return "var(--alert)";
     case "pending":
-      return "#f0801a";
+      return "var(--primary)";
     case "verified":
-      return "#d9a406";
+      return "var(--warning)";
     case "resolved":
-      return "#1f9d5a";
+      return "var(--success)";
     default:
-      return "#8b93a1";
+      return "var(--muted-foreground)";
   }
 }
 

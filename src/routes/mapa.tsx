@@ -67,7 +67,7 @@ function MapPage() {
               {isLoading ? "Carregando ocorrências..." : `${filtered.length} ocorrência(s) exibida(s)`}
             </p>
           </div>
-          <Button asChild variant="alert">
+          <Button asChild variant="default">
             <Link to="/reportar">
               <Flame className="size-4" /> Reportar incêndio
             </Link>
@@ -130,7 +130,7 @@ function MapPage() {
           {(["active", "pending", "resolved", "false_report"] as FireStatus[]).map((s) => (
             <span key={s} className="flex items-center gap-1.5">
               <span
-                className="size-3 rounded-full border border-white"
+                className="size-3 rounded-full border border-marker-border"
                 style={{ backgroundColor: statusColor(s) }}
               />
               {label(FIRE_STATUSES, s)}
