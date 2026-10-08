@@ -123,7 +123,7 @@ function MessagesPage() {
                   <p className="truncate text-xs text-muted-foreground">{c.last?.content ?? "Nova conversa"}</p>
                 </div>
                 {c.unread > 0 && (
-                  <span className="rounded-full bg-alert px-2 text-xs font-bold text-alert-foreground">{c.unread}</span>
+                  <span className="rounded-full bg-primary px-2 text-xs font-bold text-primary-foreground">{c.unread}</span>
                 )}
               </button>
             );

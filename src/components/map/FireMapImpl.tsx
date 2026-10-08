@@ -23,7 +23,7 @@ export type FireMapProps = {
 function pinIcon(color: string) {
   return L.divIcon({
     className: "",
-    html: `<span style="display:block;width:20px;height:20px;border-radius:9999px;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(15,23,42,.45)"></span>`,
+    html: `<span style="display:block;width:20px;height:20px;border-radius:9999px;background:${color};border:3px solid var(--marker-border);box-shadow:var(--marker-shadow)"></span>`,
     iconSize: [20, 20],
     iconAnchor: [10, 10],
   });
@@ -71,7 +71,7 @@ export default function FireMapImpl({
           {renderPopup && <Popup minWidth={220}>{renderPopup(point.id)}</Popup>}
         </Marker>
       ))}
-      {picked && <Marker position={[picked.lat, picked.lng]} icon={pinIcon("#e5484d")} />}
+      {picked && <Marker position={[picked.lat, picked.lng]} icon={pinIcon("var(--alert)")} />}
     </MapContainer>
   );
 }

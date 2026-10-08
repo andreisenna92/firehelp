@@ -6,7 +6,7 @@
 
 /*
  * FIREHELP design system.
- * Institutional navy + alert red/orange + safe green.
+ * Warm graphite + orange/amber + semantic risk red and safe green.
  */
 
 @theme inline {
@@ -26,6 +26,10 @@
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  --color-brand: var(--brand);
+  --color-overlay: var(--overlay);
+  --color-hero-foreground: var(--hero-foreground);
+  --color-marker-border: var(--marker-border);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -53,77 +57,51 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --shadow-soft: 0 1px 2px oklch(0.25 0.05 258 / 0.06), 0 8px 24px oklch(0.25 0.05 258 / 0.08);
-  --shadow-lift: 0 2px 6px oklch(0.25 0.05 258 / 0.08), 0 18px 40px oklch(0.25 0.05 258 / 0.12);
+  --shadow-soft: 0 1px 2px oklch(0.23420 0.00841 59.236 / 0.06), 0 8px 24px oklch(0.23420 0.00841 59.236 / 0.08);
+  --shadow-lift: 0 2px 6px oklch(0.23420 0.00841 59.236 / 0.08), 0 18px 40px oklch(0.23420 0.00841 59.236 / 0.12);
 }
 
 :root {
   --radius: 0.85rem;
-  --background: oklch(0.985 0.004 250);
-  --foreground: oklch(0.24 0.045 258);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.24 0.045 258);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.24 0.045 258);
-  --primary: oklch(0.31 0.072 258);
-  --primary-foreground: oklch(0.985 0.004 250);
-  --secondary: oklch(0.955 0.008 250);
-  --secondary-foreground: oklch(0.31 0.072 258);
-  --muted: oklch(0.958 0.006 250);
-  --muted-foreground: oklch(0.52 0.025 256);
-  --accent: oklch(0.95 0.02 40);
-  --accent-foreground: oklch(0.38 0.14 35);
-  --destructive: oklch(0.575 0.222 27);
-  --destructive-foreground: oklch(0.99 0 0);
-  --alert: oklch(0.6 0.215 30);
-  --alert-foreground: oklch(0.99 0 0);
-  --ember: oklch(0.72 0.175 55);
-  --success: oklch(0.6 0.135 152);
-  --success-foreground: oklch(0.99 0 0);
-  --warning: oklch(0.78 0.155 75);
-  --warning-foreground: oklch(0.28 0.06 60);
-  --border: oklch(0.915 0.008 250);
-  --input: oklch(0.915 0.008 250);
-  --ring: oklch(0.6 0.215 30);
-  --chart-1: oklch(0.6 0.215 30);
-  --chart-2: oklch(0.72 0.175 55);
-  --chart-3: oklch(0.6 0.135 152);
-  --chart-4: oklch(0.31 0.072 258);
-  --chart-5: oklch(0.65 0.09 250);
-}
-
-.dark {
-  --background: oklch(0.19 0.04 258);
-  --foreground: oklch(0.97 0.005 250);
-  --card: oklch(0.24 0.045 258);
-  --card-foreground: oklch(0.97 0.005 250);
-  --popover: oklch(0.24 0.045 258);
-  --popover-foreground: oklch(0.97 0.005 250);
-  --primary: oklch(0.97 0.005 250);
-  --primary-foreground: oklch(0.24 0.045 258);
-  --secondary: oklch(0.29 0.045 258);
-  --secondary-foreground: oklch(0.97 0.005 250);
-  --muted: oklch(0.29 0.045 258);
-  --muted-foreground: oklch(0.72 0.02 255);
-  --accent: oklch(0.33 0.06 40);
-  --accent-foreground: oklch(0.95 0.02 40);
-  --destructive: oklch(0.65 0.2 27);
-  --destructive-foreground: oklch(0.99 0 0);
-  --alert: oklch(0.63 0.215 30);
-  --alert-foreground: oklch(0.99 0 0);
-  --ember: oklch(0.74 0.17 55);
-  --success: oklch(0.65 0.13 152);
-  --success-foreground: oklch(0.15 0.03 150);
-  --warning: oklch(0.8 0.15 75);
-  --warning-foreground: oklch(0.25 0.06 60);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.63 0.215 30);
-  --chart-1: oklch(0.63 0.215 30);
-  --chart-2: oklch(0.74 0.17 55);
-  --chart-3: oklch(0.65 0.13 152);
-  --chart-4: oklch(0.72 0.05 255);
-  --chart-5: oklch(0.6 0.09 250);
+  --background: oklch(0.23420 0.00841 59.236);
+  --foreground: oklch(0.98482 0.01128 71.902);
+  --card: oklch(0.27524 0.01993 50.133);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.30135 0.02387 53.166);
+  --popover-foreground: var(--foreground);
+  --brand: oklch(0.62757 0.16897 41.519);
+  --primary: oklch(0.70099 0.16807 47.299);
+  --primary-foreground: var(--background);
+  --secondary: oklch(0.32455 0.02810 50.739);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.30713 0.02031 54.248);
+  --muted-foreground: oklch(0.76964 0.01992 67.525);
+  --accent: oklch(0.34031 0.03999 50.426);
+  --accent-foreground: oklch(0.78024 0.14402 69.420);
+  --destructive: oklch(0.56358 0.17597 27.557);
+  --destructive-foreground: var(--foreground);
+  --alert: oklch(0.68551 0.14342 26.616);
+  --alert-foreground: var(--background);
+  --ember: oklch(0.78024 0.14402 69.420);
+  --success: oklch(0.76077 0.11377 156.175);
+  --success-foreground: var(--background);
+  --warning: var(--ember);
+  --warning-foreground: var(--ember);
+  --border: oklch(0.45054 0.03527 50.064);
+  --input: oklch(0.51009 0.03912 50.749);
+  --ring: var(--primary);
+  --chart-1: var(--primary);
+  --chart-2: var(--ember);
+  --chart-3: var(--success);
+  --chart-4: var(--brand);
+  --chart-5: var(--muted-foreground);
+  --overlay: var(--background);
+  --hero-foreground: var(--foreground);
+  --marker-border: var(--foreground);
+  --marker-shadow: 0 2px 8px oklch(0.23420 0.00841 59.236 / .45);
+  --hero-start: var(--background);
+  --hero-end: var(--card);
+  --hero-glow: oklch(0.62757 0.16897 41.519 / .22);
 }
 
 @layer base {
@@ -156,9 +134,9 @@
 
 @utility hero-institutional {
   background:
-    radial-gradient(90% 120% at 100% 0%, oklch(0.6 0.215 30 / 0.35) 0%, transparent 55%),
-    linear-gradient(135deg, oklch(0.26 0.06 258) 0%, oklch(0.34 0.08 262) 100%);
-  color: oklch(0.985 0.004 250);
+    radial-gradient(90% 120% at 100% 0%, var(--hero-glow) 0%, transparent 55%),
+    linear-gradient(135deg, var(--hero-start) 0%, var(--hero-end) 100%);
+  color: var(--hero-foreground);
 }
 
 @utility text-gradient-fire {
@@ -175,4 +153,30 @@
   background: var(--color-muted);
   font-family: var(--font-sans);
   z-index: 0;
+}
+
+/* Keep map controls and occurrence popups aligned with the application palette. */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background: var(--popover);
+  color: var(--popover-foreground);
+}
+.leaflet-container a, .leaflet-container a.leaflet-popup-close-button {
+  color: var(--primary);
+}
+.leaflet-bar a {
+  background-color: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+.leaflet-bar a:hover, .leaflet-bar a:focus {
+  background-color: var(--secondary);
+  color: var(--foreground);
+}
+.leaflet-bar a.leaflet-disabled {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+.leaflet-container .leaflet-control-attribution {
+  background: color-mix(in oklab, var(--card) 90%, transparent);
+  color: var(--muted-foreground);
 }

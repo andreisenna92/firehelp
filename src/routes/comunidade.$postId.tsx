@@ -254,7 +254,7 @@ function CommentBody({
       </p>
       <p className="whitespace-pre-line text-sm">{comment.content}</p>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        <button type="button" onClick={onLike} className="inline-flex items-center gap-1 hover:text-alert">
+        <button type="button" onClick={onLike} className="inline-flex items-center gap-1 hover:text-primary">
           <Heart className="size-3.5" /> {likes}
         </button>
         <button type="button" onClick={onReply} className="inline-flex items-center gap-1 hover:text-foreground">

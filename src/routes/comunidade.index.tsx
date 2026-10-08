@@ -81,7 +81,7 @@ function ForumPage() {
             </p>
           </div>
           {user ? (
-            <Button variant="alert" onClick={() => setOpen((value) => !value)}>
+            <Button variant="default" onClick={() => setOpen((value) => !value)}>
               <Plus className="size-4" /> Novo tópico
             </Button>
           ) : (

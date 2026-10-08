@@ -82,7 +82,7 @@ function ProfilePage() {
                   : "Usuário"}
             </p>
           </div>
-          <Button asChild variant="alert">
+          <Button asChild variant="default">
             <Link to="/reportar">
               <Flame className="size-4" /> Reportar
             </Link>

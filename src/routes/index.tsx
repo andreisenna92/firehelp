@@ -49,13 +49,13 @@ function Dashboard() {
       <section className="hero-institutional">
         <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-14 md:grid-cols-[1.2fr_1fr] md:items-center md:py-20">
           <div className="space-y-5">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 rounded-full border border-hero-foreground/25 bg-hero-foreground/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider">
               <Activity className="size-3.5" /> Rede comunitária de Saquarema
             </span>
             <h1 className="text-4xl font-extrabold leading-tight md:text-5xl">
               Ajude a proteger Saquarema.
             </h1>
-            <p className="max-w-xl text-white/75">
+            <p className="max-w-xl text-hero-foreground/75">
               Informe incêndios, acompanhe ocorrências e compartilhe informações importantes com
               moradores de Saquarema.
             </p>
@@ -73,7 +73,7 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="h-64 overflow-hidden rounded-2xl border border-white/20 shadow-lift md:h-80">
+          <div className="h-64 overflow-hidden rounded-2xl border border-hero-foreground/20 shadow-lift md:h-80">
             <FireMap
               points={(reports.data ?? []).map((r) => ({
                 id: r.id,
@@ -124,7 +124,7 @@ function Dashboard() {
         <section className="space-y-4">
           <SectionHeader
             title="Ocorrências recentes"
-            action={<Link to="/mapa" className="text-sm font-medium text-alert hover:underline">Ver no mapa</Link>}
+            action={<Link to="/mapa" className="text-sm font-medium text-primary hover:underline">Ver no mapa</Link>}
           />
           {reports.isLoading ? (
             <div className="grid gap-3 md:grid-cols-2">
@@ -170,7 +170,7 @@ function Dashboard() {
           <SectionHeader
             title="Notícias e alertas"
             action={
-              <Link to="/noticias" className="text-sm font-medium text-alert hover:underline">
+              <Link to="/noticias" className="text-sm font-medium text-primary hover:underline">
                 Ver todas
               </Link>
             }
@@ -198,7 +198,7 @@ function Dashboard() {
                         <Newspaper className="size-3.5" />
                         {formatDate(item.created_at)}
                       </div>
-                      <h3 className="font-semibold leading-snug group-hover:text-alert">
+                      <h3 className="font-semibold leading-snug group-hover:text-primary">
                         {item.title}
                       </h3>
                       <p className="line-clamp-2 text-sm text-muted-foreground">{item.summary}</p>

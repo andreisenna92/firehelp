@@ -336,7 +336,7 @@ function AdminPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => startEditNews(item)}
+                      onClick={() => startEditNews(item as Parameters<typeof startEditNews>[0])}
                     >
                       Editar
                     </Button>

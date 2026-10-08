@@ -54,12 +54,12 @@ function AuthPage() {
             <br />
             Comunidade que ajuda.
           </h1>
-          <p className="max-w-md text-white/75">
+          <p className="max-w-md text-hero-foreground/75">
             Reporte focos de incêndio em segundos, acompanhe ocorrências no mapa e troque
             informações de prevenção com moradores de Saquarema.
           </p>
         </div>
-        <p className="text-xs text-white/60">
+        <p className="text-xs text-hero-foreground/60">
           Em emergências, acione os Bombeiros (193) ou a Defesa Civil (199).
         </p>
       </div>
