@@ -149,7 +149,7 @@ function ReportPage() {
               {protocol}
             </p>
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-              <Button asChild variant="alert">
+              <Button asChild variant="default">
                 <Link to="/mapa">Ver no mapa</Link>
               </Button>
               <Button asChild variant="outline">
@@ -332,7 +332,7 @@ function Chip({
       onClick={onClick}
       className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
         active
-          ? "border-alert bg-alert text-alert-foreground"
+          ? "border-primary bg-primary text-primary-foreground"
           : "border-border bg-card hover:bg-secondary"
       }`}
     >

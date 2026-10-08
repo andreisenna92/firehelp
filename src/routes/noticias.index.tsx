@@ -87,7 +87,7 @@ function NewsList() {
                   <span className="inline-block rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-accent-foreground">
                     {NEWS_CATEGORIES.find((c) => c.value === item.category)?.label}
                   </span>
-                  <h2 className="font-semibold leading-snug group-hover:text-alert">
+                  <h2 className="font-semibold leading-snug group-hover:text-primary">
                     {item.title}
                   </h2>
                   <p className="line-clamp-3 text-sm text-muted-foreground">{item.summary}</p>
