@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-type Post = { id: string; title: string; content: string | null; image_url?: string | null };
+type Post = { id: string; title: string; content: string; image_url?: string | null };
 
 export function AdminPostEditor({ post, onDone }: { post: Post; onDone: () => void }) {
   const { user } = useAuth();
