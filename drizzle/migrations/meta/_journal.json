@@ -22,6 +22,13 @@
       "when": 1790790967756,
       "tag": "0002_community_messages_gestores",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791504486277,
+      "tag": "0003_harden_data_layer",
+      "breakpoints": true
     }
   ]
 }

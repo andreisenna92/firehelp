@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string | null
+          table_name: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
       content_reports: {
         Row: {
           created_at: string
@@ -22,8 +55,11 @@ export type Database = {
           reason: string
           reporter_id: string | null
           resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
           target_id: string
           target_type: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
@@ -32,8 +68,11 @@ export type Database = {
           reason: string
           reporter_id?: string | null
           resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
           target_id: string
           target_type: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
@@ -42,8 +81,11 @@ export type Database = {
           reason?: string
           reporter_id?: string | null
           resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
           target_id?: string
           target_type?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -86,6 +128,7 @@ export type Database = {
           longitude: number
           protocol: string
           reported_at: string
+          resolved_at: string | null
           severity: Database["public"]["Enums"]["fire_severity"]
           status: Database["public"]["Enums"]["fire_status"]
           type: Database["public"]["Enums"]["fire_type"]
@@ -101,6 +144,7 @@ export type Database = {
           longitude: number
           protocol?: string
           reported_at?: string
+          resolved_at?: string | null
           severity: Database["public"]["Enums"]["fire_severity"]
           status?: Database["public"]["Enums"]["fire_status"]
           type: Database["public"]["Enums"]["fire_type"]
@@ -116,6 +160,7 @@ export type Database = {
           longitude?: number
           protocol?: string
           reported_at?: string
+          resolved_at?: string | null
           severity?: Database["public"]["Enums"]["fire_severity"]
           status?: Database["public"]["Enums"]["fire_status"]
           type?: Database["public"]["Enums"]["fire_type"]
@@ -167,6 +212,7 @@ export type Database = {
           id: string
           parent_id: string | null
           post_id: string
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -176,6 +222,7 @@ export type Database = {
           id?: string
           parent_id?: string | null
           post_id: string
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -185,6 +232,7 @@ export type Database = {
           id?: string
           parent_id?: string | null
           post_id?: string
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
@@ -367,6 +415,7 @@ export type Database = {
           full_name: string
           id: string
           last_seen_at: string | null
+          updated_at: string
         }
         Insert: {
           avatar_url?: string | null
@@ -377,6 +426,7 @@ export type Database = {
           full_name?: string
           id: string
           last_seen_at?: string | null
+          updated_at?: string
         }
         Update: {
           avatar_url?: string | null
@@ -387,6 +437,7 @@ export type Database = {
           full_name?: string
           id?: string
           last_seen_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
