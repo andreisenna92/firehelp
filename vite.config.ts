@@ -10,7 +10,14 @@ export default defineConfig({
   plugins: [
     tsConfigPaths(),
     tanstackStart(),
-    nitro(),
+    nitro(
+      process.env.VERCEL
+        ? {}
+        : {
+            preset: "cloudflare-module",
+            output: { dir: "dist", publicDir: "dist/client", serverDir: "dist/server" },
+          },
+    ),
     viteReact(),
     tailwindcss(),
   ],
