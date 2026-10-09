@@ -7,7 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // On Vercel, Nitro auto-detects its preset. Elsewhere (Lovable), build a
 // Cloudflare Worker into dist/, which is what Lovable deploys.
-const lovableBuild = !process.env.VERCEL;
+const lovableBuild = !process.env["VERCEL"];
 
 export default defineConfig({
   server: { port: 3000 },
