@@ -36,6 +36,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
       },
       { property: "og:title", content: "Painel de moderação — FIREHELP" },
       { property: "og:description", content: "Gestão de ocorrências, notícias e denúncias." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),

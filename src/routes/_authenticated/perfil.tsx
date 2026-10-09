@@ -32,6 +32,8 @@ export const Route = createFileRoute("/_authenticated/perfil")({
         property: "og:description",
         content: "Suas ocorrências, tópicos e contribuições na comunidade.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ProfilePage,
