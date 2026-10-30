@@ -74,6 +74,24 @@ function Dashboard() {
                 </Link>
               </Button>
             </div>
+            <div className="mt-4 flex justify-center md:mt-2 md:justify-end md:pr-6 lg:pr-12">
+              <img
+                src={mimoPointing.url}
+                alt="Mimo, o mico bombeiro, mascote do FireHelp"
+                width={1024}
+                height={1536}
+                loading="lazy"
+                className="hidden h-56 w-auto object-contain drop-shadow-lift md:block lg:h-72"
+              />
+              <img
+                src={mimoWave.url}
+                alt="Mimo, o mico bombeiro, acenando"
+                width={1024}
+                height={1536}
+                loading="lazy"
+                className="h-40 w-auto object-contain drop-shadow-lift md:hidden"
+              />
+            </div>
           </div>
 
           <div className="h-64 overflow-hidden rounded-2xl border border-hero-foreground/20 shadow-lift md:h-80">
@@ -163,7 +181,22 @@ function Dashboard() {
                 </div>
               ))}
               {recent.length === 0 && (
-                <p className="text-sm text-muted-foreground">Nenhuma ocorrência registrada ainda.</p>
+                <div className="surface-card flex items-center gap-4 p-4 md:col-span-2">
+                  <img
+                    src={mimoThumbs.url}
+                    alt="Mimo, o mico bombeiro, comemorando"
+                    width={1024}
+                    height={1536}
+                    loading="lazy"
+                    className="h-24 w-auto shrink-0 object-contain"
+                  />
+                  <div>
+                    <p className="font-medium">Nenhuma ocorrência registrada ainda.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Mimo agradece — comunidade tranquila por aqui!
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           )}
