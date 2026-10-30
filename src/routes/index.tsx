@@ -6,6 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SafetyNotice } from "@/components/SafetyNotice";
 import { FireMap } from "@/components/map/FireMap";
 import { useCommunityStats, useNews, useReports } from "@/hooks/useFirehelp";
+import mimoPointing from "@/assets/mimo-pointing.webp";
+import mimoWave from "@/assets/mimo-wave.webp";
+import mimoThumbs from "@/assets/mimo-thumbs.webp";
 import {
   FIRE_STATUSES,
   FIRE_TYPES,
@@ -70,6 +73,24 @@ function Dashboard() {
                   <MapIcon className="size-5" /> Ver ocorrências
                 </Link>
               </Button>
+            </div>
+            <div className="mt-4 flex justify-center md:mt-2 md:justify-end md:pr-6 lg:pr-12">
+              <img
+                src={mimoPointing}
+                alt="Mimo, o mico bombeiro, mascote do FireHelp"
+                width={600}
+                height={900}
+                loading="lazy"
+                className="hidden h-56 w-auto object-contain drop-shadow-lift md:block lg:h-72"
+              />
+              <img
+                src={mimoWave}
+                alt="Mimo, o mico bombeiro, acenando"
+                width={512}
+                height={768}
+                loading="lazy"
+                className="h-40 w-auto object-contain drop-shadow-lift md:hidden"
+              />
             </div>
           </div>
 
@@ -160,7 +181,22 @@ function Dashboard() {
                 </div>
               ))}
               {recent.length === 0 && (
-                <p className="text-sm text-muted-foreground">Nenhuma ocorrência registrada ainda.</p>
+                <div className="surface-card flex items-center gap-4 p-4 md:col-span-2">
+                  <img
+                    src={mimoThumbs.url}
+                    alt="Mimo, o mico bombeiro, comemorando"
+                    width={1024}
+                    height={1536}
+                    loading="lazy"
+                    className="h-24 w-auto shrink-0 object-contain"
+                  />
+                  <div>
+                    <p className="font-medium">Nenhuma ocorrência registrada ainda.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Mimo agradece — comunidade tranquila por aqui!
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           )}
