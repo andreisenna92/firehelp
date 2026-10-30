@@ -1,4 +1,4 @@
-import mimoLogo from "@/assets/mimo-logo.png.asset.json";
+import mimoLogo from "@/assets/mimo-logo.webp";
 
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
