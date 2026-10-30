@@ -1,11 +1,16 @@
-import { Flame, MapPin } from "lucide-react";
+import mimoLogo from "@/assets/mimo-logo.png.asset.json";
 
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <span className="flex items-center gap-2">
-      <span className="relative grid size-9 place-items-center rounded-xl bg-brand text-primary-foreground shadow-soft">
-        <Flame className="size-5" strokeWidth={2.4} />
-        <MapPin className="absolute -bottom-1 -right-1 size-4 rounded-full bg-primary p-0.5 text-primary-foreground" />
+      <span className="relative grid size-9 place-items-center overflow-hidden rounded-xl bg-brand shadow-soft">
+        <img
+          src={mimoLogo.url}
+          alt="Mimo, mascote do FireHelp"
+          width={64}
+          height={64}
+          className="size-9 scale-110 object-cover object-top"
+        />
       </span>
       {!compact && (
         <span className="flex flex-col leading-none">

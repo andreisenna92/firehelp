@@ -6,6 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SafetyNotice } from "@/components/SafetyNotice";
 import { FireMap } from "@/components/map/FireMap";
 import { useCommunityStats, useNews, useReports } from "@/hooks/useFirehelp";
+import mimoPointing from "@/assets/mimo-pointing.png.asset.json";
+import mimoWave from "@/assets/mimo-wave.png.asset.json";
+import mimoThumbs from "@/assets/mimo-thumbs.png.asset.json";
 import {
   FIRE_STATUSES,
   FIRE_TYPES,
