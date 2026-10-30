@@ -9,7 +9,7 @@ import tailwindcss from "@tailwindcss/vite";
 // Cloudflare Worker into dist/, which is what Lovable deploys. Dev mode keeps
 // Nitro's default dev flow — the custom preset/output only applies to builds.
 export default defineConfig(({ command }) => ({
-  server: { port: 3000 },
+  server: { port: 3000, fs: { allow: ["/persist", "/dev-server"] } },
   nitro: command === "build" && !process.env["VERCEL"]
     ? {
         preset: "cloudflare-module",
