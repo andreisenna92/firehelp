@@ -5,7 +5,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
     <span className="flex items-center gap-2">
       <span className="relative grid size-9 place-items-center overflow-hidden rounded-xl bg-brand shadow-soft">
         <img
-          src={mimoLogo.url}
+          src={mimoLogo}
           alt="Mimo, mascote do FireHelp"
           width={64}
           height={64}

@@ -76,18 +76,18 @@ function Dashboard() {
             </div>
             <div className="mt-4 flex justify-center md:mt-2 md:justify-end md:pr-6 lg:pr-12">
               <img
-                src={mimoPointing.url}
+                src={mimoPointing}
                 alt="Mimo, o mico bombeiro, mascote do FireHelp"
-                width={1024}
-                height={1536}
+                width={600}
+                height={900}
                 loading="lazy"
                 className="hidden h-56 w-auto object-contain drop-shadow-lift md:block lg:h-72"
               />
               <img
-                src={mimoWave.url}
+                src={mimoWave}
                 alt="Mimo, o mico bombeiro, acenando"
-                width={1024}
-                height={1536}
+                width={512}
+                height={768}
                 loading="lazy"
                 className="h-40 w-auto object-contain drop-shadow-lift md:hidden"
               />
