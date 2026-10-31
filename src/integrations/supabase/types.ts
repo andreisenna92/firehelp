@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_enrollments: {
+        Row: {
+          cpf: string
+          email: string
+          expires_at: string
+          full_name: string
+          token_hash: string
+        }
+        Insert: {
+          cpf: string
+          email: string
+          expires_at?: string
+          full_name: string
+          token_hash: string
+        }
+        Update: {
+          cpf?: string
+          email?: string
+          expires_at?: string
+          full_name?: string
+          token_hash?: string
+        }
+        Relationships: []
+      }
+      account_identities: {
+        Row: {
+          cpf_digest: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          cpf_digest: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          cpf_digest?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_identities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_identities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_registration_state: {
+        Row: {
+          claimed_at: string | null
+          digest_key: string
+          principal_user_id: string | null
+          singleton: boolean
+        }
+        Insert: {
+          claimed_at?: string | null
+          digest_key?: string
+          principal_user_id?: string | null
+          singleton?: boolean
+        }
+        Update: {
+          claimed_at?: string | null
+          digest_key?: string
+          principal_user_id?: string | null
+          singleton?: boolean
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -411,6 +489,7 @@ export type Database = {
           bio: string | null
           blocked: boolean
           created_at: string
+          deleted_at: string | null
           email: string | null
           full_name: string
           id: string
@@ -422,6 +501,7 @@ export type Database = {
           bio?: string | null
           blocked?: boolean
           created_at?: string
+          deleted_at?: string | null
           email?: string | null
           full_name?: string
           id: string
@@ -433,6 +513,7 @@ export type Database = {
           bio?: string | null
           blocked?: boolean
           created_at?: string
+          deleted_at?: string | null
           email?: string | null
           full_name?: string
           id?: string
@@ -493,6 +574,15 @@ export type Database = {
       }
       is_blocked: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      prepare_member_removal: {
+        Args: { target_id: string }
+        Returns: undefined
+      }
+      set_member_manager: {
+        Args: { make_manager: boolean; target_id: string }
+        Returns: undefined
+      }
+      valid_cpf: { Args: { value: string }; Returns: boolean }
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"

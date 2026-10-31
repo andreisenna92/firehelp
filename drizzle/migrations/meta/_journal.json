@@ -29,6 +29,13 @@
       "when": 1791504486277,
       "tag": "0003_harden_data_layer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793450451560,
+      "tag": "0004_traditional_accounts_private_cpf",
+      "breakpoints": true
     }
   ]
 }
