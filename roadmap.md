@@ -2,6 +2,8 @@
 
 - [x] Resolve first-manager assignment: the first new signup becomes principal manager; keep existing profiles.
 - [x] Prepare the minimal implementation plan preserving existing pages, design, data and Vercel deployment.
-- [ ] Implement private validated unique CPF registration, email/password login, email recovery and editable avatars.
-- [ ] Implement backend-enforced manager/member permissions and safe member removal.
-- [ ] Verify registration, login, recovery and permissions without damaging existing accounts or data.
+- [x] Implement private validated unique CPF registration, email/password login, email recovery and editable avatars.
+- [x] Implement backend-enforced manager/member permissions and soft account removal preserving contribution references.
+- [x] Verify CPF rules, role helpers, private grants, signed-in member profile, sign-out and own post create/edit/delete; build clean, existing seven accounts preserved.
+- [ ] Verify first/second signup and simultaneous first-manager assignment: blocked by lack of isolated database with Auth fixture permissions; do not consume the real first signup.
+- [ ] Verify successful password login, delivered recovery/confirmation emails and manager actions end-to-end: requires suitable isolated accounts and email access; existing passwords were not requested or changed.
