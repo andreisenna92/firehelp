@@ -9,3 +9,4 @@
 - A durable database claim and shared transaction lock assign the first new registration and serialize manager changes, so concurrent requests cannot bypass role safeguards.
 - Manager and member are the UI access levels; legacy admin/moderator roles map to manager, and role mutations use protected database functions rather than client table writes.
 - Account removal revokes roles and access then soft-deletes the Auth identity, so existing content, messages and foreign-key references survive without a schema rewrite.
+- `vite.config.ts` defines the browser backend URL/publishable key with env-first fallbacks, because hosted preview builds may run without `.env` and the client throws when they are missing.
