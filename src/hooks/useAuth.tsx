@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { isManagerRole } from "@/lib/accounts";
 
 export type Profile = {
   id: string;
@@ -18,17 +20,22 @@ type AuthValue = {
   isStaff: boolean;
   isAdmin: boolean;
   loading: boolean;
-  signInWithGoogle: () => Promise<{ error?: string }>;
+  recovery: boolean;
+  refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [recovery, setRecovery] = useState(false);
+  const [profileVersion, setProfileVersion] = useState(0);
+  const [loadedUserId, setLoadedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -36,6 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (!active) return;
       setSession(nextSession);
+      if (_event === "PASSWORD_RECOVERY") setRecovery(true);
+      if (_event === "SIGNED_OUT") { setRecovery(false); setLoadedUserId(null); }
       setLoading(false);
     });
 
@@ -64,13 +73,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const [profileRes, rolesRes] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id, full_name, avatar_url, created_at, blocked")
+          .select("id, full_name, avatar_url, created_at, blocked, deleted_at")
           .eq("id", userId)
           .maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
       if (!active) return;
-      if (profileRes.data?.blocked) {
+      if (profileRes.error || rolesRes.error) {
+        setProfile(null);
+        setRoles([]);
+        setLoadedUserId(userId);
+        return;
+      }
+      if (profileRes.data?.blocked || profileRes.data?.deleted_at) {
         await supabase.auth.signOut();
         if (typeof window !== "undefined") {
           window.alert("Sua conta está suspensa. Entre em contato com a gestão do FIREHELP.");
@@ -83,12 +98,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           : null,
       );
       setRoles((rolesRes.data ?? []).map((r) => r.role as string));
+      setLoadedUserId(userId);
       void supabase.from("profiles").update({ last_seen_at: new Date().toISOString() }).eq("id", userId);
     })();
     return () => {
       active = false;
     };
-  }, [userId]);
+  }, [userId, profileVersion]);
 
   const value = useMemo<AuthValue>(() => {
     return {
@@ -96,29 +112,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       roles,
-      isStaff: roles.includes("admin") || roles.includes("moderator"),
-      isAdmin: roles.includes("admin"),
-      loading,
-      signInWithGoogle: async () => {
-        const redirectTo =
-          (import.meta.env["VITE_SUPABASE_REDIRECT_URL"] as string | undefined) ||
-          window.location.origin;
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo,
-          },
-        });
-        if (error) return { error: error.message };
-        return {};
-      },
+      isStaff: loadedUserId === userId && isManagerRole(roles),
+      isAdmin: loadedUserId === userId && isManagerRole(roles),
+      loading: loading || Boolean(userId && loadedUserId !== userId),
+      recovery,
+      refreshProfile: async () => { setProfileVersion((v) => v + 1); },
       signOut: async () => {
+        await queryClient.cancelQueries();
+        queryClient.clear();
         await supabase.auth.signOut();
         setProfile(null);
         setRoles([]);
       },
     };
-  }, [session, profile, roles, loading]);
+  }, [session, profile, roles, loading, userId, loadedUserId, recovery, queryClient]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
