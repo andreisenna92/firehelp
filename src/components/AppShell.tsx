@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   async function handleSignOut() {
     await signOut();
-    void navigate({ to: "/", replace: true });
+    void navigate({ to: "/auth", replace: true });
   }
 
   return (
@@ -93,7 +93,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   size="icon"
                   onClick={handleSignOut}
                   aria-label="Sair"
-                  className="hidden sm:inline-flex"
+                  title="Sair da conta"
                 >
                   <LogOut className="size-4" />
                 </Button>
