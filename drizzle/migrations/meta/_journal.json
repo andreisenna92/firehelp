@@ -36,6 +36,13 @@
       "when": 1793450451560,
       "tag": "0004_traditional_accounts_private_cpf",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793450600790,
+      "tag": "0005_restrict_private_registration_grants",
+      "breakpoints": true
     }
   ]
 }
