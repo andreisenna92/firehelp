@@ -1,5 +1,7 @@
-import { describe, expect, test } from "bun:test";
-import { canManagePost, canRemoveManager, isManagerRole, isValidCpf, normalizeCpf, registrationSchema } from "./accounts";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+const expect = (actual: unknown) => ({ toBe(expected: unknown) { assert.equal(actual, expected); } });
+import { canManagePost, canRemoveManager, isManagerRole, isValidCpf, normalizeCpf, registrationSchema } from "../src/lib/accounts";
 
 describe("Cadastro tradicional", () => {
   test("aceita CPF com dígitos verificadores válidos", () => expect(isValidCpf("529.982.247-25")).toBe(true));
