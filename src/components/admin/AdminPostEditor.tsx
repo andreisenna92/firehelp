@@ -27,15 +27,17 @@ export function AdminPostEditor({ post, onDone }: { post: Post; onDone: () => vo
   }
 
   async function save() {
+    if (!title.trim() || !content.trim() || title.trim().length > 200 || content.trim().length > 20000) { toast.error("Preencha título e conteúdo dentro dos limites permitidos."); return; }
     setSaving(true);
     const { error } = await supabase
       .from("forum_posts")
       .update({ title: title.trim(), content: content.trim(), image_url: imageUrl || null, updated_at: new Date().toISOString() })
-      .eq("id", post.id);
+      .eq("id", post.id).select("id");
     setSaving(false);
     if (error) { toast.error("Não foi possível salvar."); return; }
     toast.success("Post atualizado.");
     void qc.invalidateQueries({ queryKey: ["forum_posts"] });
+    void qc.invalidateQueries({ queryKey: ["forum_post", post.id] });
     onDone();
   }
 

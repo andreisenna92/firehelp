@@ -53,6 +53,7 @@ function AdminPage() {
 
   const denuncias = useQuery({
     queryKey: ["content_reports"],
+    enabled: isStaff,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("content_reports")
@@ -104,7 +105,7 @@ function AdminPage() {
         <div className="mx-auto max-w-lg px-4 py-20 text-center">
           <h1 className="text-2xl font-bold">Acesso restrito</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Esta área é exclusiva para administradores e moderadores da plataforma.
+            Esta área é exclusiva para gerentes da plataforma.
           </p>
           <Button asChild className="mt-6">
             <Link to="/">Voltar ao início</Link>

@@ -38,6 +38,7 @@ function MembersPage() {
         .from("profiles")
         .select("id, full_name, avatar_url, bio, created_at, last_seen_at, blocked")
         .eq("blocked", false)
+        .is("deleted_at", null)
         .order("full_name");
       if (error) throw error;
       return data ?? [];

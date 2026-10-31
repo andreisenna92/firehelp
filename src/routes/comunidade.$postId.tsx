@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, Flag, Heart, Reply } from "lucide-react";
@@ -7,6 +7,9 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AuthorAvatar } from "@/components/AuthorAvatar";
+import { AdminPostEditor } from "@/components/admin/AdminPostEditor";
+import { canManagePost } from "@/lib/accounts";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { FORUM_CATEGORIES, REPORT_REASONS, formatDateTime } from "@/lib/firehelp";
@@ -42,7 +45,9 @@ type CommentRow = {
 
 function TopicPage() {
   const { postId } = Route.useParams();
-  const { user, profile } = useAuth();
+  const { user, profile, isStaff } = useAuth();
+  const navigate = useNavigate();
+  const [editing, setEditing] = useState(false);
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
@@ -138,6 +143,14 @@ function TopicPage() {
   const roots = (comments.data ?? []).filter((c) => !c.parent_id);
   const childrenOf = (id: string) => (comments.data ?? []).filter((c) => c.parent_id === id);
   const likeCount = (id: string) => (likes.data ?? []).filter((l) => l.comment_id === id).length;
+  async function deleteTopic() {
+    if (!post.data || !canManagePost(user?.id ?? null, post.data.user_id, isStaff)) return;
+    if (!window.confirm("Excluir esta publicação e suas respostas?")) return;
+    const result = await supabase.from("forum_posts").delete().eq("id", postId).select("id");
+    if (result.error || !result.data?.length) { toast.error("Não foi possível excluir a publicação."); return; }
+    void queryClient.invalidateQueries({ queryKey: ["forum_posts"] });
+    await navigate({ to: "/comunidade" });
+  }
 
   return (
     <AppShell>
@@ -157,16 +170,23 @@ function TopicPage() {
           <div className="surface-card space-y-3 p-5">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span className="rounded-full bg-secondary px-2 py-0.5 font-semibold text-secondary-foreground">
-                {FORUM_CATEGORIES.find((c) => c.value === post.data!.category)?.label}
+                {FORUM_CATEGORIES.find((c) => c.value === post.data?.category)?.label}
               </span>
+              <AuthorAvatar userId={post.data.user_id} name={post.data.author_name} />
               <span>{post.data.author_name ?? "Membro da comunidade"}</span>
               <span>· {formatDateTime(post.data.created_at)}</span>
             </div>
             <h1 className="text-2xl font-bold">{post.data.title}</h1>
             <p className="whitespace-pre-line leading-relaxed">{post.data.content}</p>
+            {post.data.image_url && <img src={post.data.image_url} alt="Foto da publicação" className="max-h-80 w-full rounded-lg object-contain" />}
+            {canManagePost(user?.id ?? null, post.data.user_id, isStaff) && <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => setEditing((v) => !v)}>Editar publicação</Button>
+              <Button size="sm" variant="destructive" onClick={deleteTopic}>Excluir publicação</Button>
+            </div>}
+            {editing && <AdminPostEditor post={post.data} onDone={() => setEditing(false)} />}
             <button
               type="button"
-              onClick={() => reportContent("forum_post", post.data!.id)}
+              onClick={() => reportContent("forum_post", postId)}
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-alert"
             >
               <Flag className="size-3.5" /> Denunciar conteúdo
@@ -249,7 +269,8 @@ function CommentBody({
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-xs text-muted-foreground">
+      <p className="flex items-center gap-2 text-xs text-muted-foreground">
+        <AuthorAvatar userId={comment.user_id} name={comment.author_name} />
         {comment.author_name ?? "Membro"} · {formatDateTime(comment.created_at)}
       </p>
       <p className="whitespace-pre-line text-sm">{comment.content}</p>

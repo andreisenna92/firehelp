@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AuthorAvatar } from "@/components/AuthorAvatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useForumPosts } from "@/hooks/useFirehelp";
@@ -168,6 +169,7 @@ function ForumPage() {
                       {FORUM_CATEGORIES.find((c) => c.value === post.category)?.emoji}{" "}
                       {FORUM_CATEGORIES.find((c) => c.value === post.category)?.label}
                     </span>
+                    <AuthorAvatar userId={post.user_id} name={post.author_name} />
                     <span>{post.author_name ?? "Membro da comunidade"}</span>
                     <span>· {formatDateTime(post.created_at)}</span>
                   </div>
