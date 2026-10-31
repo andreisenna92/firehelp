@@ -183,10 +183,10 @@ function Dashboard() {
               {recent.length === 0 && (
                 <div className="surface-card flex items-center gap-4 p-4 md:col-span-2">
                   <img
-                    src={mimoThumbs.url}
+                    src={mimoThumbs}
                     alt="Mimo, o mico bombeiro, comemorando"
-                    width={1024}
-                    height={1536}
+                    width={341}
+                    height={512}
                     loading="lazy"
                     className="h-24 w-auto shrink-0 object-contain"
                   />
