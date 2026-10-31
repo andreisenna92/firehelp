@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import postgres from "postgres";
 
 // The entire fixture is rolled back; no real signup or principal claim is retained.
-test("cadastro e permissões no banco, sem consumir o primeiro cadastro real", { skip: !process.env["SUPABASE_DB_URL"] }, async () => {
-  const sql = postgres(process.env["SUPABASE_DB_URL"] ?? "", { max: 1, connect_timeout: 10, onnotice: () => {} });
+test("cadastro e permissões no banco, sem consumir o primeiro cadastro real", { skip: !process.env["FIREHELP_ISOLATED_TEST_DATABASE_URL"] && "Requer banco isolado com permissão de teste em auth; a conexão do projeto não permite criar contas transacionais." }, async () => {
+  const sql = postgres(process.env["FIREHELP_ISOLATED_TEST_DATABASE_URL"] ?? "", { max: 1, connect_timeout: 10, onnotice: () => {} });
   const rollback = new Error("ROLLBACK_ACCOUNT_TEST");
   try {
     await sql.begin(async (tx) => {

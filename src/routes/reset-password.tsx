@@ -45,7 +45,9 @@ function ResetPasswordPage() {
       const result = await supabase.auth.updateUser({ password: parsed.data });
       if (result.error) { toast.error("Não foi possível alterar a senha. Solicite um novo link ou tente outra senha."); return; }
       toast.success("Senha atualizada.");
-      await navigate({ to: "/perfil", replace: true });
+      window.sessionStorage.removeItem("firehelp-recovery");
+      await supabase.auth.signOut();
+      await navigate({ to: "/auth", replace: true });
     } catch { toast.error("Não foi possível alterar a senha."); }
     finally { setBusy(false); }
   }

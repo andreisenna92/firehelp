@@ -44,13 +44,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!active) return;
       setSession(nextSession);
       if (_event === "PASSWORD_RECOVERY") setRecovery(true);
+      if (_event === "PASSWORD_RECOVERY") window.sessionStorage.setItem("firehelp-recovery", "true");
       if (_event === "SIGNED_OUT") { setRecovery(false); setLoadedUserId(null); }
+      if (_event === "SIGNED_OUT") window.sessionStorage.removeItem("firehelp-recovery");
       setLoading(false);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
       setSession(data.session);
+      setRecovery(Boolean(data.session && window.sessionStorage.getItem("firehelp-recovery") === "true"));
       setLoading(false);
     });
 
