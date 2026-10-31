@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Flame, MessageSquare, Sparkles, ThumbsUp } from "lucide-react";
+import { Flame, MessageSquare, Sparkles, ThumbsUp, Camera } from "lucide-react";
+import { useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -40,22 +42,41 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 });
 
 function ProfilePage() {
-  const { user, profile, roles } = useAuth();
+  const { user, profile, isStaff, refreshProfile } = useAuth();
+  const photoInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  async function uploadAvatar(file: File) {
+    if (!user) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) { toast.error("Escolha uma foto JPG, PNG ou WebP de até 5 MB."); return; }
+    setUploading(true);
+    try {
+      const path = `${user.id}/avatars/${crypto.randomUUID()}.${file.type.split("/")[1]}`;
+      const upload = await supabase.storage.from("fire-images").upload(path, file);
+      if (upload.error) { toast.error("Não foi possível enviar a foto."); return; }
+      const signed = await supabase.storage.from("fire-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+      if (signed.error || !signed.data?.signedUrl) { toast.error("Não foi possível salvar a foto."); return; }
+      const update = await supabase.from("profiles").update({ avatar_url: signed.data.signedUrl }).eq("id", user.id);
+      if (update.error) { toast.error("Não foi possível atualizar seu perfil."); return; }
+      await refreshProfile();
+      toast.success("Foto de perfil atualizada.");
+    } finally { setUploading(false); }
+  }
   const reports = useMyReports(user?.id ?? null);
 
   const stats = useQuery({
     queryKey: ["profile_stats", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) return { posts: 0, comments: 0 };
       const [posts, comments] = await Promise.all([
         supabase
           .from("forum_posts")
           .select("id", { count: "exact", head: true })
-          .eq("user_id", user!.id),
+          .eq("user_id", user.id),
         supabase
           .from("forum_comments")
           .select("id", { count: "exact", head: true })
-          .eq("user_id", user!.id),
+          .eq("user_id", user.id),
       ]);
       return { posts: posts.count ?? 0, comments: comments.count ?? 0 };
     },
@@ -72,16 +93,14 @@ function ProfilePage() {
             <AvatarImage src={profile?.avatar_url ?? undefined} alt={profile?.full_name} />
             <AvatarFallback>{(profile?.full_name ?? "U").slice(0, 1)}</AvatarFallback>
           </Avatar>
+          <input ref={photoInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" aria-label="Foto de perfil" onChange={(e) => { const file = e.target.files?.[0]; if (file) void uploadAvatar(file); e.target.value = ""; }} />
+          <Button size="icon" variant="ghost" title="Alterar foto de perfil" aria-label="Alterar foto de perfil" disabled={uploading} onClick={() => photoInput.current?.click()}><Camera className="size-4" /></Button>
           <div className="min-w-0 flex-1">
             <h1 className="text-xl font-bold">{profile?.full_name ?? "Meu perfil"}</h1>
             <p className="truncate text-sm text-muted-foreground">{profile?.email}</p>
             <p className="text-xs text-muted-foreground">
               Na comunidade desde {formatDate(profile?.created_at)} ·{" "}
-              {roles.includes("admin")
-                ? "Administrador"
-                : roles.includes("moderator")
-                  ? "Moderador"
-                  : "Usuário"}
+              {isStaff ? "Gerente" : "Membro"}
             </p>
           </div>
           <Button asChild variant="default">
@@ -155,7 +174,7 @@ function MiniStat({
   label: text,
   value,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
   value: number;
 }) {

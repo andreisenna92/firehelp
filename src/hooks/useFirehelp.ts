@@ -120,7 +120,7 @@ export function useCommunityStats() {
           .from("fire_reports")
           .select("id", { count: "exact", head: true })
           .eq("status", "resolved"),
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("profiles").select("id", { count: "exact", head: true }).is("deleted_at", null),
       ]);
       return {
         active: active.count ?? 0,
