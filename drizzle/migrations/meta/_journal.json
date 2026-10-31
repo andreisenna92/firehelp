@@ -43,6 +43,13 @@
       "when": 1793450600790,
       "tag": "0005_restrict_private_registration_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793450762454,
+      "tag": "0006_prevent_removed_accounts_private_reads",
+      "breakpoints": true
     }
   ]
 }
