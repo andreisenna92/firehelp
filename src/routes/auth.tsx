@@ -1,5 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { registrationSchema, emailSchema } from "@/lib/accounts";
+import { registerAccount } from "@/lib/accounts.functions";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
@@ -17,7 +23,7 @@ export const Route = createFileRoute("/auth")({
       { property: "og:title", content: "Entrar no FIREHELP" },
       {
         property: "og:description",
-        content: "Acesse com sua conta Google e ajude a proteger Saquarema.",
+        content: "Acesse com e-mail e senha e ajude a proteger Saquarema.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -27,21 +33,50 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { user, loading, signInWithGoogle } = useAuth();
+  const { user, loading, recovery } = useAuth();
+  const register = useServerFn(registerAccount);
+  const [mode, setMode] = useState<"login" | "signup" | "recovery">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [notice, setNotice] = useState("");
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) void navigate({ to: "/", replace: true });
-  }, [user, loading, navigate]);
+    if (!loading && user) void navigate({ to: recovery ? "/reset-password" : "/", replace: true });
+  }, [user, loading, recovery, navigate]);
 
-  async function handleGoogle() {
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setNotice("");
+    const parsedEmail = emailSchema.safeParse(email);
+    if (!parsedEmail.success) { toast.error("Informe um e-mail válido."); return; }
     setBusy(true);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      toast.error("Não foi possível entrar com o Google. Tente novamente.");
-      setBusy(false);
-    }
+    try {
+      if (mode === "signup") {
+        const parsed = registrationSchema.safeParse({ fullName, cpf, email, password });
+        if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Confira seus dados."); return; }
+        const result = await register({ data: parsed.data });
+        if (result.error) { toast.error(result.error); return; }
+        setCpf(""); setPassword("");
+        if (result.session) {
+          const session = await supabase.auth.setSession(result.session);
+          if (session.error) { toast.error("Cadastro recebido. Entre novamente para continuar."); return; }
+          await navigate({ to: "/", replace: true });
+        } else setNotice("Cadastro recebido. Confira seu e-mail para confirmar a conta antes de entrar. Se já possui conta, recupere sua senha.");
+      } else if (mode === "recovery") {
+        const result = await supabase.auth.resetPasswordForEmail(parsedEmail.data, { redirectTo: `${window.location.origin}/reset-password` });
+        if (result.error) { toast.error("Não foi possível enviar o e-mail de recuperação. Tente novamente."); return; }
+        setNotice("Se houver uma conta com esse e-mail, você receberá um link para definir sua senha.");
+      } else {
+        const result = await supabase.auth.signInWithPassword({ email: parsedEmail.data, password });
+        if (result.error) { toast.error("Não foi possível entrar. Confira e-mail, senha e confirmação da conta."); return; }
+        await navigate({ to: "/", replace: true });
+      }
+    } catch { toast.error("Não foi possível concluir. Tente novamente."); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -70,22 +105,23 @@ function AuthPage() {
             <Logo />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold">Entrar no FIREHELP</h2>
-            <p className="text-sm text-muted-foreground">
-              Use sua conta Google. Seu perfil é criado automaticamente no primeiro acesso.
-            </p>
+            <h2 className="text-2xl font-bold">{mode === "signup" ? "Criar conta no FIREHELP" : mode === "recovery" ? "Recuperar senha" : "Entrar no FIREHELP"}</h2>
+            <p className="text-sm text-muted-foreground">{mode === "signup" ? "Seu CPF permanece protegido e não aparece para outros membros." : mode === "recovery" ? "Informe o e-mail da sua conta." : "Acesse com seu e-mail e senha."}</p>
           </div>
-
-          <Button
-            size="xl"
-            variant="default"
-            className="w-full"
-            onClick={handleGoogle}
-            disabled={busy}
-          >
-            <GoogleIcon />
-            {busy ? "Conectando..." : "Entrar com Google"}
-          </Button>
+          <form onSubmit={submit} className="space-y-4">
+            {mode === "signup" && <>
+              <div className="space-y-2"><Label htmlFor="full-name">Nome completo</Label><Input id="full-name" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={120} required /></div>
+              <div className="space-y-2"><Label htmlFor="cpf">CPF</Label><Input id="cpf" inputMode="numeric" autoComplete="off" value={cpf} onChange={(e) => setCpf(e.target.value)} maxLength={14} required /></div>
+            </>}
+            <div className="space-y-2"><Label htmlFor="email">E-mail</Label><Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} required /></div>
+            {mode !== "recovery" && <div className="space-y-2"><Label htmlFor="password">Senha</Label><Input id="password" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} minLength={mode === "signup" ? 8 : 1} maxLength={128} required /></div>}
+            {notice && <p role="status" className="text-sm text-muted-foreground">{notice}</p>}
+            <Button size="xl" className="w-full" type="submit" disabled={busy}>{busy ? "Aguarde..." : mode === "signup" ? "Criar conta" : mode === "recovery" ? "Enviar link" : "Entrar"}</Button>
+          </form>
+          <div className="flex flex-wrap justify-center gap-2">
+            <Button variant="ghost" size="sm" disabled={busy} onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setNotice(""); }}>{mode === "signup" ? "Já tenho conta" : "Criar conta"}</Button>
+            <Button variant="ghost" size="sm" disabled={busy} onClick={() => { setMode(mode === "recovery" ? "login" : "recovery"); setNotice(""); }}>{mode === "recovery" ? "Voltar para entrar" : "Esqueci minha senha"}</Button>
+          </div>
 
           <SafetyNotice />
 
@@ -100,25 +136,3 @@ function AuthPage() {
   );
 }
 
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-      <path
-        fill="#FFC107"
-        d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"
-      />
-      <path
-        fill="#FF3D00"
-        d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"
-      />
-      <path
-        fill="#4CAF50"
-        d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"
-      />
-      <path
-        fill="#1976D2"
-        d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.1 5.6l6.2 5.2C39.1 36.5 44 31 44 24c0-1.3-.1-2.6-.4-3.9z"
-      />
-    </svg>
-  );
-}
