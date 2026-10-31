@@ -37,4 +37,5 @@ export default defineConfig(({ command, mode }) => {
     viteReact(),
     tailwindcss(),
   ],
-}));
+  };
+});
