@@ -199,12 +199,16 @@ export type Database = {
       fire_reports: {
         Row: {
           address: string | null
+          deleted_at: string | null
           description: string | null
           id: string
           is_demo: boolean
           latitude: number
           longitude: number
+          municipality: string | null
+          neighborhood: string | null
           protocol: string
+          published: boolean
           reported_at: string
           resolved_at: string | null
           severity: Database["public"]["Enums"]["fire_severity"]
@@ -215,12 +219,16 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
           is_demo?: boolean
           latitude: number
           longitude: number
+          municipality?: string | null
+          neighborhood?: string | null
           protocol?: string
+          published?: boolean
           reported_at?: string
           resolved_at?: string | null
           severity: Database["public"]["Enums"]["fire_severity"]
@@ -231,12 +239,16 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
           is_demo?: boolean
           latitude?: number
           longitude?: number
+          municipality?: string | null
+          neighborhood?: string | null
           protocol?: string
+          published?: boolean
           reported_at?: string
           resolved_at?: string | null
           severity?: Database["public"]["Enums"]["fire_severity"]
@@ -522,6 +534,36 @@ export type Database = {
         }
         Relationships: []
       }
+      super_admin_identity: {
+        Row: {
+          singleton: boolean
+          user_id: string
+        }
+        Insert: {
+          singleton?: boolean
+          user_id: string
+        }
+        Update: {
+          singleton?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "super_admin_identity_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "super_admin_identity_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -565,6 +607,7 @@ export type Database = {
       }
     }
     Functions: {
+      claim_super_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -574,6 +617,19 @@ export type Database = {
       }
       is_blocked: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
+      list_admin_members: {
+        Args: never
+        Returns: {
+          access_level: string
+          avatar_url: string
+          blocked: boolean
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+        }[]
+      }
       prepare_member_removal: {
         Args: { target_id: string }
         Returns: undefined

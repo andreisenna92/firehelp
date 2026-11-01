@@ -47,7 +47,7 @@ export const removeMember = createServerFn({ method: "POST" })
   .inputValidator(z.object({ userId: z.string().uuid() }))
   .handler(async ({ data, context }) => {
     setResponseHeader("Cache-Control", "no-store");
-    const check = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    const check = await context.supabase.rpc("is_super_admin", { _user_id: context.userId });
     if (check.error || !check.data || data.userId === context.userId) return { error: "Sem permissão para excluir esta conta." };
     // Atomic permission and last-manager checks also revoke access before Auth deletion.
     const prepared = await context.supabase.rpc("prepare_member_removal", { target_id: data.userId });

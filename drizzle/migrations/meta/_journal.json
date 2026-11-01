@@ -50,6 +50,13 @@
       "when": 1793450762454,
       "tag": "0006_prevent_removed_accounts_private_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793541886629,
+      "tag": "0007_protected_super_admin_and_alert_fields",
+      "breakpoints": true
     }
   ]
 }

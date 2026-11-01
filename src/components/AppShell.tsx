@@ -68,7 +68,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 activeProps={{ className: "bg-secondary text-foreground" }}
               >
                 <span className="flex items-center gap-1.5">
-                  <Shield className="size-4" /> Moderação
+                  <Shield className="size-4" /> Administração
                 </span>
               </Link>
             )}
