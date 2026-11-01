@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { removeMember } from "@/lib/accounts.functions";
 
 export function AdminUsers() {
-  const { user } = useAuth();
+  const { user, isSuperAdmin } = useAuth();
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -19,16 +19,9 @@ export function AdminUsers() {
   const list = useQuery({
     queryKey: ["admin_members"],
     queryFn: async () => {
-      const [p, r] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, avatar_url, blocked, created_at").is("deleted_at", null).order("full_name"),
-        supabase.from("user_roles").select("user_id, role"),
-      ]);
-      if (p.error) throw p.error;
-      if (r.error) throw r.error;
-      const staff = new Set(
-        (r.data ?? []).filter((x) => x.role === "admin" || x.role === "moderator").map((x) => x.user_id),
-      );
-      return (p.data ?? []).map((m) => ({ ...m, gestor: staff.has(m.id) }));
+      const result = await supabase.rpc("list_admin_members");
+      if (result.error) throw result.error;
+      return (result.data ?? []).map((m) => ({ ...m, gestor: m.access_level !== "member" }));
     },
   });
 
@@ -40,11 +33,12 @@ export function AdminUsers() {
   }
 
   async function setManager(id: string, isManager: boolean) {
+    if (!window.confirm(isManager ? "Remover o acesso de administrador?" : "Promover este membro a administrador?")) return;
     setBusy(id);
     const { error } = await supabase.rpc("set_member_manager", { target_id: id, make_manager: !isManager });
     setBusy(null);
     if (error) { toast.error(error.message); return; }
-    toast.success(isManager ? "Função de gerente removida." : "Membro promovido a gerente.");
+    toast.success(isManager ? "Função de administrador removida." : "Membro promovido a administrador.");
     void qc.invalidateQueries({ queryKey: ["admin_members"] });
   }
 
@@ -76,19 +70,20 @@ export function AdminUsers() {
             <div className="min-w-0">
               <p className="truncate font-medium">{m.full_name}</p>
               <p className="text-xs text-muted-foreground">
-                {m.gestor ? "Gerente" : "Membro"} · {m.blocked ? "Suspenso" : "Ativo"}
+                {m.access_level === "super_admin" ? "Super Admin" : m.gestor ? "Administrador" : "Membro"} · {m.blocked ? "Suspenso" : "Ativo"}
               </p>
+              <p className="break-all text-xs text-muted-foreground">{m.email}</p>
             </div>
           </div>
-          {m.id !== user?.id && (
+          {m.id !== user?.id && m.access_level !== "super_admin" && (
             <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" disabled={busy === m.id} onClick={() => setManager(m.id, m.gestor)}>
-                {m.gestor ? "Remover gerente" : "Promover a gerente"}
-              </Button>
+              {isSuperAdmin && <Button size="sm" variant="outline" disabled={busy === m.id} onClick={() => setManager(m.id, m.gestor)}>
+                {m.gestor ? "Remover administrador" : "Promover a administrador"}
+              </Button>}
               <Button size="sm" variant={m.blocked ? "outline" : "destructive"} onClick={() => setBlocked(m.id, !m.blocked)}>
                 {m.blocked ? "Reativar" : "Suspender"}
               </Button>
-              <Button size="icon" variant="ghost" disabled={busy === m.id} aria-label={`Excluir membro ${m.full_name}`} title="Excluir membro" onClick={() => deleteMember(m.id)}><Trash2 className="size-4" /></Button>
+              {isSuperAdmin && <Button size="icon" variant="ghost" disabled={busy === m.id} aria-label={`Excluir membro ${m.full_name}`} title="Excluir membro" onClick={() => deleteMember(m.id)}><Trash2 className="size-4" /></Button>}
             </div>
           )}
         </div>

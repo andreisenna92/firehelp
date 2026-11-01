@@ -19,6 +19,7 @@ type AuthValue = {
   roles: string[];
   isStaff: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   loading: boolean;
   recovery: boolean;
   refreshProfile: () => Promise<void>;
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [recovery, setRecovery] = useState(false);
   const [profileVersion, setProfileVersion] = useState(0);
@@ -70,9 +72,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!userId) {
       setProfile(null);
       setRoles([]);
+      setIsSuperAdmin(false);
       return;
     }
     void (async () => {
+      const principal = await supabase.rpc("claim_super_admin");
+      if (!active) return;
+      setIsSuperAdmin(principal.data === true && !principal.error);
       const [profileRes, rolesRes] = await Promise.all([
         supabase
           .from("profiles")
@@ -115,8 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       roles,
-      isStaff: loadedUserId === userId && isManagerRole(roles),
-      isAdmin: loadedUserId === userId && isManagerRole(roles),
+      isStaff: loadedUserId === userId && (isSuperAdmin || isManagerRole(roles)),
+      isAdmin: loadedUserId === userId && (isSuperAdmin || isManagerRole(roles)),
+      isSuperAdmin: loadedUserId === userId && isSuperAdmin,
       loading: loading || Boolean(userId && loadedUserId !== userId),
       recovery,
       refreshProfile: async () => { setProfileVersion((v) => v + 1); },
@@ -128,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRoles([]);
       },
     };
-  }, [session, profile, roles, loading, userId, loadedUserId, recovery, queryClient]);
+  }, [session, profile, roles, loading, userId, loadedUserId, recovery, queryClient, isSuperAdmin]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
