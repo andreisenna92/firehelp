@@ -1,3 +1,11 @@
+# Requested functional update
+
+- [ ] Protect the verified projetofirehelp@gmail.com account as super administrator; restrict administrator promotions and demotions to it without changing login.
+- [ ] Extend existing administration for news publishing/images and alert creation/editing/deletion, preserving data and history.
+- [ ] Replace Leaflet with Google Maps and preserve report markers and manual selection; connection setup is pending.
+- [ ] Add required occurrence address, neighborhood/city storage, address lookup and high-accuracy current location.
+- [ ] Verify permission rules and news/alert flows; report Google Maps validation on an authorized deployed origin.
+
 # Requested account changes
 
 - [x] Resolve first-manager assignment: the first new signup becomes principal manager; keep existing profiles.
