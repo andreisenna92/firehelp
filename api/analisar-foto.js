@@ -32,6 +32,7 @@ export default async function handler(req, res) {
   const jwt = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!jwt) return send(res, 401, { error: "Entre na sua conta para enviar fotos." });
   const who = await sb("/auth/v1/user", { key: PUBLIC_KEY, bearer: jwt });
+  if (who.status === 0) return send(res, 200, { ok: false, unavailable: true, mimo: "Não consegui falar com o servidor agora. Tente de novo em instantes.", detail: who.data?.code || who.data?.message });
   if (!who.ok) return send(res, 401, { error: "Sua sessão expirou. Entre de novo." });
   if (!iaConfigured()) return send(res, 200, { ok: false, unavailable: true, mimo: "Minha análise de fotos está desligada agora, então não consigo aceitar avisos. Em emergência, ligue 193!" });
 

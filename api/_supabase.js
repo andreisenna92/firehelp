@@ -9,7 +9,13 @@ export async function sb(path, { key = SECRET, method = "GET", body, headers = {
   const h = { ...authHeaders(key), ...headers };
   if (bearer) h.Authorization = `Bearer ${bearer}`;
   if (body !== undefined) h["Content-Type"] = "application/json";
-  const res = await fetch(URL_ + path, { method, headers: h, body: body === undefined ? undefined : JSON.stringify(body) });
+  let res;
+  try {
+    res = await fetch(URL_ + path, { method, headers: h, body: body === undefined ? undefined : JSON.stringify(body) });
+  } catch (e) {
+    console.error("supabase fetch", path, e.message, e.cause?.code || "");
+    return { ok: false, status: 0, data: { message: e.message, code: e.cause?.code } };
+  }
   const text = await res.text();
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = text; }
