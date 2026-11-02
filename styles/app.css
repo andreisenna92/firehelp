@@ -609,13 +609,18 @@ a.card:hover { box-shadow: 0 0 0 1px rgba(233, 162, 27, .45), 0 12px 30px -16px 
 .auth-art { background: radial-gradient(60% 60% at 80% 85%, rgba(233, 162, 27, .45), transparent 70%), var(--ink); }
 .auth-art img { filter: drop-shadow(0 0 30px rgba(233, 162, 27, .45)); }
 
-/* Mimo animado no cabeçalho */
-.brand-mimo { position: relative; display: block; height: 56px; aspect-ratio: 184 / 114; margin: 2px -4px 0 0; filter: drop-shadow(0 2px 6px rgba(233, 140, 27, .35)); animation: mimoBob 4s ease-in-out infinite; transform-origin: 60% 100%; }
-.brand-mimo img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.brand-hand { transform-origin: 26% 62%; animation: mimoWave 6s ease-in-out infinite; }
-.brand:hover .brand-hand { animation-duration: 1.2s; }
-.brand:hover .brand-mimo { animation: mimoHop .6s ease-out; }
-@keyframes mimoBob { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-2.5deg) translateY(-1px); } }
-@keyframes mimoWave { 0%, 55%, 100% { transform: rotate(0); } 62% { transform: rotate(-14deg); } 70% { transform: rotate(10deg); } 78% { transform: rotate(-12deg); } 86% { transform: rotate(8deg); } 93% { transform: rotate(0); } }
-@keyframes mimoHop { 40% { transform: translateY(-4px) rotate(-4deg); } }
-@media (max-width: 860px) { .brand-mimo { height: 48px; } }
+/* Mimo animado no cabeçalho: selo dourado com o Mimo saindo por cima */
+.brand-mimo { --d: 48px; position: relative; display: block; width: var(--d); height: var(--d); margin-top: 8px; flex: none; }
+.bm-ring { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3cf, #f6c453 55%, #e09312); box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(233, 162, 27, .55), 0 4px 14px -2px rgba(233, 140, 27, .65); animation: ringGlow 3.2s ease-in-out infinite; }
+.bm-clip { position: absolute; left: 50%; bottom: 0; width: calc(var(--d) * 1.9); height: calc(var(--d) * 1.6); transform: translateX(-50%);
+  -webkit-mask: radial-gradient(circle calc(var(--d) / 2) at 50% calc(100% - var(--d) / 2), #000 calc(var(--d) / 2 - .5px), transparent calc(var(--d) / 2)), linear-gradient(#000 0 0) top / 100% calc(100% - var(--d) * .45) no-repeat;
+          mask: radial-gradient(circle calc(var(--d) / 2) at 50% calc(100% - var(--d) / 2), #000 calc(var(--d) / 2 - .5px), transparent calc(var(--d) / 2)), linear-gradient(#000 0 0) top / 100% calc(100% - var(--d) * .45) no-repeat; }
+.bm-clip img { position: absolute; left: 6%; top: 31%; width: 74%; height: auto; transform-origin: 62% 95%; animation: mimoBob 4s ease-in-out infinite; }
+.bm-clip .brand-hand { transform-origin: 30% 72%; animation: mimoWave 6s ease-in-out infinite; }
+.brand:hover .bm-clip img:not(.brand-hand) { animation: mimoHop .7s ease-out; }
+.brand:hover .brand-hand { animation: mimoWave 1.3s ease-in-out infinite; }
+@keyframes mimoBob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-1.5px) rotate(-2deg); } }
+@keyframes mimoWave { 0%, 55%, 100% { transform: rotate(0); } 62% { transform: rotate(-16deg); } 70% { transform: rotate(10deg); } 78% { transform: rotate(-14deg); } 86% { transform: rotate(8deg); } 93% { transform: rotate(0); } }
+@keyframes mimoHop { 35% { transform: translateY(-5px) rotate(-5deg); } 70% { transform: translateY(1px) rotate(2deg); } }
+@keyframes ringGlow { 50% { box-shadow: 0 0 0 2.5px #fff, 0 0 0 5px rgba(233, 162, 27, .35), 0 4px 22px 2px rgba(255, 170, 40, .75); } }
+@media (max-width: 860px) { .brand-mimo { --d: 44px; } }
