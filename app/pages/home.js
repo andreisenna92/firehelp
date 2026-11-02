@@ -59,6 +59,9 @@ export default async function home({ el }) {
         <button class="mimo-say" type="button" data-mimo="" id="mimo-say"><span id="mimo-say-txt">Oi! Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção.</span> <b>Fale comigo</b></button>
         <button class="mimo-live" type="button" id="mimo-live" aria-label="Conversar com o Mimo">
           <span class="ml-glow" aria-hidden="true"></span>
+          <span class="ml-shadow" aria-hidden="true"></span>
+          <span class="ml-sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          <span class="ml-heart" aria-hidden="true">🧡</span>
           <span class="ml-rig" aria-hidden="true">
             <img class="ml-cauda" src="/assets/mimo/heroi-cauda.webp" alt="" width="576" height="768">
             <img class="ml-corpo" src="/assets/mimo/heroi-corpo.webp" alt="" width="576" height="768">
@@ -178,7 +181,7 @@ function animateMimo(root) {
   const live = root.querySelector("#mimo-live");
   const say = root.querySelector("#mimo-say-txt");
   if (!live) return () => {};
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = false; // o Mimo se mexe sempre (pedido do dono do site)
   let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0, i = 0;
   const onMove = (e) => {
     const r = live.getBoundingClientRect();
@@ -201,8 +204,15 @@ function animateMimo(root) {
     say.parentElement.classList.add("swap");
     setTimeout(() => { say.textContent = FALAS[i]; say.parentElement.classList.remove("swap"); }, 250);
   }, 8000);
+  const party = () => {
+    live.classList.remove("party"); void live.offsetWidth; live.classList.add("party");
+    setTimeout(() => live.classList.remove("party"), 1250);
+  };
+  let partyT = 0;
+  const scheduleParty = () => { partyT = setTimeout(() => { if (!document.hidden) party(); scheduleParty(); }, 7000 + Math.random() * 5000); };
+  scheduleParty();
   const poke = () => {
-    live.classList.remove("hop"); void live.offsetWidth; live.classList.add("hop");
+    party();
     blink();
     setTimeout(() => root.querySelector("#mimo-say")?.click(), 380); // abre a conversa
   };
@@ -214,5 +224,5 @@ function animateMimo(root) {
     raf = requestAnimationFrame(loop);
     scheduleBlink();
   }
-  return () => { cancelAnimationFrame(raf); clearTimeout(blinkT); clearInterval(talk); removeEventListener("pointermove", onMove); };
+  return () => { cancelAnimationFrame(raf); clearTimeout(blinkT); clearTimeout(partyT); clearInterval(talk); removeEventListener("pointermove", onMove); };
 }
