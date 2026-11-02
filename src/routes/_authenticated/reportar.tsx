@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Camera, Crosshair, Flame, Loader2, MapPin, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Camera, Crosshair, Flame, Loader2, MapPin, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -11,6 +13,7 @@ import { SafetyNotice } from "@/components/SafetyNotice";
 import { FireMap } from "@/components/map/FireMap";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { geocodeAddress, reverseGeocodePoint } from "@/lib/maps.functions";
 import {
   FIRE_SEVERITIES,
   FIRE_TYPES,
