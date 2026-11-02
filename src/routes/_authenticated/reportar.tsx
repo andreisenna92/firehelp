@@ -276,6 +276,32 @@ function ReportPage() {
         </Field>
 
         <Field step={4} title="Localização">
+          <div className="space-y-2">
+            <Label htmlFor="address">Endereço ou local da ocorrência</Label>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                id="address"
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
+                placeholder="Rua, número, bairro, cidade e ponto de referência"
+                maxLength={300}
+                required
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={searchAddress}
+                disabled={searchingAddress}
+              >
+                {searchingAddress ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
+                Buscar endereço
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Busque o endereço para posicionar o marcador ou ajuste o ponto diretamente no mapa.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" onClick={useMyLocation} disabled={locating}>
               {locating ? <Loader2 className="size-4 animate-spin" /> : <Crosshair className="size-4" />}
@@ -299,7 +325,8 @@ function ReportPage() {
           {coords && (
             <p className="mt-2 text-xs text-muted-foreground">
               {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
-              {address ? ` · ${address}` : ""}
+              {neighborhood ? ` · ${neighborhood}` : ""}
+              {municipality ? ` · ${municipality}` : ""}
             </p>
           )}
         </Field>
