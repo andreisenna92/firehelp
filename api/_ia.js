@@ -2,7 +2,7 @@
 // ou com Claude (ANTHROPIC_API_KEY). Configure uma das duas na Vercel.
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
 // "gemini-flash-latest" acompanha sempre o modelo Flash mais novo; os outros são reserva.
-const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.8-flash"].filter(Boolean);
+const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.8-flash", "gemini-flash-lite-latest"].filter(Boolean);
 const CLAUDE_KEY = process.env.ANTHROPIC_API_KEY || "";
 const CLAUDE_MODEL = process.env.ANTHROPIC_MODEL || "claude-haiku-5-5";
 
@@ -22,7 +22,10 @@ export async function ask({ system, messages, image, json = false, maxTokens = 6
       ],
     }));
     let d, lastErr;
-    for (const model of GEMINI_MODELS) {
+    const tries = GEMINI_MODELS.flatMap((m) => [m, m]); // cada modelo tenta 2 vezes
+    for (let i = 0; i < tries.length; i++) {
+      const model = tries[i];
+      if (i % 2 === 1) await new Promise((r) => setTimeout(r, 700));
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
@@ -35,8 +38,10 @@ export async function ask({ system, messages, image, json = false, maxTokens = 6
       d = await res.json().catch(() => ({}));
       if (res.ok) { lastErr = null; break; }
       lastErr = new Error(d.error?.message || `Gemini ${res.status}`);
-      // modelo aposentado ou inexistente: tenta o próximo da lista
-      if (!(res.status === 404 || /no longer available|not found|not supported/i.test(lastErr.message))) break;
+      const gone = res.status === 404 || /no longer available|not found|not supported/i.test(lastErr.message);
+      const busy = res.status === 429 || res.status >= 500 || /high demand|overloaded|unavailable|try again/i.test(lastErr.message);
+      if (gone && i % 2 === 0) i++; // modelo aposentado: pula direto para o próximo
+      else if (!busy && !gone) break; // erro de verdade (chave, pedido): não adianta insistir
     }
     if (lastErr) throw lastErr;
     const cand = d.candidates?.[0];
