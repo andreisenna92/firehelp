@@ -21,9 +21,9 @@ export function loadLeaflet() {
 export async function createMap(el, { center = SAQUAREMA, zoom = 12, scrollZoom = true } = {}) {
   const L = await loadLeaflet();
   const map = L.map(el, { zoomControl: true, scrollWheelZoom: scrollZoom, attributionControl: true }).setView([center.lat, center.lng], zoom);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-    maxZoom: 19, subdomains: "abcd",
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
   map.attributionControl.setPosition("bottomleft");
   map.attributionControl.setPrefix(false);
