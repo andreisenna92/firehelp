@@ -4,6 +4,8 @@
 @font-face { font-family: "Atkinson Hyperlegible"; src: url("/assets/fonts/atkinson-regular.woff") format("woff"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Atkinson Hyperlegible"; src: url("/assets/fonts/atkinson-bold.woff") format("woff"); font-weight: 700; font-display: swap; }
 
+:where(img[src*="/assets/mimo/"]) { height: auto; object-fit: contain; } /* poses do Mimo nunca distorcem */
+
 :root {
   --paper: #F2F5EE;      /* restinga: fundo */
   --card: #FFFFFF;
@@ -271,51 +273,42 @@ a.card:hover { border-color: var(--ink-3); }
 .hero-note .ic { color: #ff7a6a; margin-top: 3px; }
 .hero-note a { color: #fff; }
 .hero-mimo { position: relative; display: grid; justify-items: center; }
-/* Mimo vivo: camadas animadas (corpo, cabeça, mão, cauda) — dança, acena e comemora */
+/* Mimo vivo: movimentos calmos e orgânicos, com emojis */
 .mimo-live { --lx: 0; --ly: 0; position: relative; display: block; width: min(320px, 68vw); aspect-ratio: 3 / 4; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.ml-glow { position: absolute; inset: 14% 4% 4%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 196, 70, .65), rgba(233, 120, 27, .25) 45%, transparent 70%); filter: blur(22px); animation: breathe 2.4s ease-in-out infinite; }
-.ml-shadow { position: absolute; left: 22%; right: 18%; bottom: 1.5%; height: 5%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .45), transparent); animation: mlShadow 1.2s ease-in-out infinite; }
-.ml-rig { position: absolute; inset: 0; transform-origin: 50% 96%; animation: mlDance 2.4s ease-in-out infinite; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .35)); }
-.ml-rig > img, .ml-head, .ml-nod, .ml-nod img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.ml-cauda { transform-origin: 24.7% 67.4%; animation: mlTail 1.2s ease-in-out infinite alternate; }
-.ml-head { transform-origin: 59.9% 45.3%; transform: rotate(calc(var(--lx) * 6deg)) translate(calc(var(--lx) * 1.5%), calc(var(--ly) * 1.2%)); }
-.ml-nod { animation: mlNod 2.4s ease-in-out infinite; transform-origin: 59.9% 45.3%; }
-.ml-mao { transform-origin: 16.1% 34.4%; animation: mlWave 3.6s ease-in-out infinite; }
-.ml-lid { position: absolute; width: 12.2%; height: 8.6%; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: linear-gradient(#e8823a, #d8692a 70%, #b8521a); border-bottom: 2.5px solid #3a1806; transform: scaleY(0); transform-origin: 50% 0; transition: transform .06s ease-in; }
+.ml-glow { position: absolute; inset: 14% 4% 4%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 196, 70, .55), rgba(233, 120, 27, .2) 45%, transparent 70%); filter: blur(22px); animation: breathe 6s ease-in-out infinite; }
+.ml-shadow { position: absolute; left: 22%; right: 18%; bottom: 1.5%; height: 5%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .4), transparent); animation: mlShadow 5.6s ease-in-out infinite; }
+.ml-rig { position: absolute; inset: 0; transform-origin: 50% 96%; animation: mlSway 5.6s cubic-bezier(.45, .05, .55, .95) infinite; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .35)); }
+.ml-breath { position: absolute; inset: 0; transform-origin: 50% 96%; animation: mlBreath 3.7s ease-in-out infinite; }
+.ml-breath > img, .ml-head, .ml-nod, .ml-nod img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ml-cauda { transform-origin: 24.7% 67.4%; animation: mlTail 3.3s cubic-bezier(.45, .05, .55, .95) infinite alternate; }
+.ml-head { transform-origin: 59.9% 45.3%; transform: rotate(calc(var(--lx) * 5deg)) translate(calc(var(--lx) * 1.2%), calc(var(--ly) * 1%)); transition: transform .5s ease-out; }
+.ml-nod { animation: mlNod 5.6s cubic-bezier(.45, .05, .55, .95) infinite; transform-origin: 59.9% 45.3%; }
+.ml-mao { transform-origin: 16.1% 34.4%; animation: mlWave 7.5s ease-in-out infinite; }
+.ml-lid { position: absolute; width: 12.2%; height: 8.6%; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: linear-gradient(#e8823a, #d8692a 70%, #b8521a); border-bottom: 2.5px solid #3a1806; transform: scaleY(0); transform-origin: 50% 0; transition: transform .07s ease-in; }
 .ml-lid.l { left: 51.6%; top: 20%; rotate: -10deg; }
 .ml-lid.r { left: 69.4%; top: 25%; rotate: -12deg; }
 .mimo-live.blink .ml-lid { transform: scaleY(1); }
-.ml-sparks { position: absolute; inset: 0; pointer-events: none; }
-.ml-sparks i { position: absolute; bottom: 30%; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle, #fff6c8, #ffb02e 55%, transparent 70%); opacity: 0; animation: mlSpark 3.2s linear infinite; }
-.ml-sparks i:nth-child(1) { left: 12%; animation-delay: 0s; } .ml-sparks i:nth-child(2) { left: 30%; animation-delay: .8s; } .ml-sparks i:nth-child(3) { left: 84%; animation-delay: 1.5s; }
-.ml-sparks i:nth-child(4) { left: 70%; animation-delay: 2.2s; } .ml-sparks i:nth-child(5) { left: 48%; animation-delay: 2.8s; } .ml-sparks i:nth-child(6) { left: 92%; animation-delay: .4s; }
-.ml-heart { position: absolute; left: 62%; top: 8%; font-size: 26px; opacity: 0; pointer-events: none; }
-/* passar o mouse: fica empolgado */
-.mimo-live.happy .ml-rig { animation-duration: 1.2s; }
-.mimo-live.happy .ml-shadow { animation-duration: .6s; }
-.mimo-live.happy .ml-mao { animation: mlWaveFast .5s ease-in-out infinite; }
-.mimo-live.happy .ml-cauda { animation-duration: .45s; }
-/* comemoração (de tempos em tempos e ao clicar) */
-.mimo-live.party .ml-rig { animation: mlJump .9s cubic-bezier(.3, .7, .4, 1); }
-.mimo-live.party .ml-shadow { animation: mlShadowJump .9s cubic-bezier(.3, .7, .4, 1); }
-.mimo-live.party .ml-mao { animation: mlWaveFast .3s ease-in-out 3; }
-.mimo-live.party .ml-heart { animation: mlHeart 1.2s ease-out; }
+.ml-emos { position: absolute; inset: -10% -14% 20%; pointer-events: none; overflow: visible; }
+.ml-emo { position: absolute; bottom: 10%; font-size: 26px; line-height: 1; opacity: 0; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .3)); animation: mlFloat var(--dur, 4.5s) cubic-bezier(.2, .6, .35, 1) forwards; }
+.ml-emo.pop { animation: mlPop 1.6s cubic-bezier(.2, .9, .3, 1) forwards; }
+/* passar o mouse: acena mais e abana a cauda — sem pressa */
+.mimo-live.happy .ml-mao { animation: mlWaveHappy 1.6s ease-in-out infinite; }
+.mimo-live.happy .ml-cauda { animation-duration: 1.4s; }
+/* comemoração suave (de tempos em tempos e ao clicar) */
+.mimo-live.party .ml-breath { animation: mlHop 1.3s cubic-bezier(.33, .7, .4, 1); }
+.mimo-live.party .ml-shadow { animation: mlShadowHop 1.3s cubic-bezier(.33, .7, .4, 1); }
 .mimo-live:focus-visible { outline-offset: 6px; border-radius: 20px; }
-@keyframes mlDance {
-  0%, 100% { transform: translateY(0) rotate(-2.2deg) scale(1.025, .975); }
-  25% { transform: translateY(-4.5%) rotate(0) scale(.985, 1.02); }
-  50% { transform: translateY(0) rotate(2.2deg) scale(1.025, .975); }
-  75% { transform: translateY(-4.5%) rotate(0) scale(.985, 1.02); }
-}
-@keyframes mlShadow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.78); opacity: .6; } }
-@keyframes mlTail { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
-@keyframes mlNod { 0%, 100% { transform: rotate(3.5deg) translateY(.6%); } 25%, 75% { transform: rotate(0) translateY(-.4%); } 50% { transform: rotate(-3.5deg) translateY(.6%); } }
-@keyframes mlWave { 0%, 100% { transform: rotate(4deg); } 10% { transform: rotate(-24deg); } 20% { transform: rotate(8deg); } 30% { transform: rotate(-24deg); } 40% { transform: rotate(8deg); } 50% { transform: rotate(-22deg); } 62% { transform: rotate(4deg); } }
-@keyframes mlWaveFast { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(-26deg); } }
-@keyframes mlJump { 0% { transform: translateY(0) scale(1, 1); } 18% { transform: translateY(0) scale(1.08, .88); } 48% { transform: translateY(-16%) scale(.94, 1.08) rotate(-4deg); } 72% { transform: translateY(0) scale(1.07, .91); } 86% { transform: translateY(-2%) scale(.99, 1.01); } 100% { transform: translateY(0) scale(1, 1); } }
-@keyframes mlShadowJump { 0%, 100% { transform: scale(1); } 48% { transform: scale(.45); opacity: .35; } 72% { transform: scale(1.1); } }
-@keyframes mlSpark { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-260%) translateX(12px) scale(1.1); opacity: 0; } }
-@keyframes mlHeart { 0% { transform: translateY(10px) scale(.4); opacity: 0; } 25% { transform: translateY(0) scale(1.15); opacity: 1; } 100% { transform: translateY(-46px) scale(.9); opacity: 0; } }
+@keyframes mlSway { 0%, 100% { transform: rotate(-1.6deg) translateX(-.6%); } 50% { transform: rotate(1.6deg) translateX(.6%); } }
+@keyframes mlBreath { 0%, 100% { transform: scale(1, 1) translateY(0); } 45% { transform: scale(1.006, 1.016) translateY(-.6%); } }
+@keyframes mlShadow { 0%, 100% { transform: translateX(-2%) scaleX(1); } 50% { transform: translateX(2%) scaleX(1); } }
+@keyframes mlTail { from { transform: rotate(-6deg); } to { transform: rotate(7deg); } }
+@keyframes mlNod { 0%, 100% { transform: rotate(2.2deg); } 50% { transform: rotate(-2.4deg) translateY(-.4%); } }
+@keyframes mlWave { 0%, 58%, 100% { transform: rotate(0); } 64% { transform: rotate(-17deg); } 71% { transform: rotate(6deg); } 78% { transform: rotate(-15deg); } 85% { transform: rotate(5deg); } 92% { transform: rotate(-4deg); } }
+@keyframes mlWaveHappy { 0%, 100% { transform: rotate(5deg); } 50% { transform: rotate(-18deg); } }
+@keyframes mlHop { 0% { transform: translateY(0) scale(1, 1); } 20% { transform: translateY(0) scale(1.03, .96); } 50% { transform: translateY(-7%) scale(.985, 1.02); } 78% { transform: translateY(0) scale(1.02, .98); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes mlShadowHop { 0%, 100% { transform: scale(1); } 50% { transform: scale(.7); opacity: .5; } }
+@keyframes mlFloat { 0% { transform: translate(0, 10px) scale(.5) rotate(var(--r0, 0deg)); opacity: 0; } 15% { opacity: 1; transform: translate(calc(var(--dx, 0px) * .2), -10px) scale(1) rotate(0deg); } 70% { opacity: .95; } 100% { transform: translate(var(--dx, 0px), -170px) scale(.85) rotate(var(--r1, 8deg)); opacity: 0; } }
+@keyframes mlPop { 0% { transform: translate(0, 0) scale(.3); opacity: 0; } 25% { opacity: 1; transform: translate(calc(var(--dx) * .5), calc(var(--dy) * .5)) scale(1.2); } 100% { transform: translate(var(--dx), var(--dy)) scale(.9); opacity: 0; } }
 .mimo-say.swap { opacity: .0; transform: translateY(4px); }
 .mimo-say { transition: opacity .25s, transform .25s; }
 @keyframes breathe { 50% { transform: scale(1.08); opacity: .8; } }
@@ -419,9 +412,9 @@ a.card:hover { border-color: var(--ink-3); }
 @media (max-width: 900px) { .news-grid { grid-template-columns: 1fr 1fr; } .news-card.lead-story { grid-column: 1 / -1; grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } }
 
-.mimo-band { display: grid; grid-template-columns: 180px 1fr; gap: 26px; align-items: center; background: var(--gold-soft); border-radius: var(--r-l); padding: 22px 28px 0; overflow: hidden; }
-.mimo-band img { align-self: end; }
-.mimo-band .tips { display: grid; gap: 10px; padding-bottom: 22px; margin: 12px 0 0; list-style: none; padding-left: 0; }
+.mimo-band { display: grid; grid-template-columns: 190px 1fr; gap: 28px; align-items: center; background: var(--gold-soft); border-radius: var(--r-l); padding: 24px 32px; }
+.mimo-band img { width: 100%; max-height: 230px; object-fit: contain; filter: drop-shadow(0 10px 16px rgba(185, 110, 0, .3)); }
+.mimo-band .tips { display: grid; gap: 10px; margin: 12px 0 18px; list-style: none; padding-left: 0; }
 .mimo-band li { display: flex; gap: 10px; align-items: flex-start; }
 .mimo-band li .ic { color: var(--ok); margin-top: 4px; }
 @media (max-width: 700px) { .mimo-band { grid-template-columns: 1fr; padding-top: 22px; } .mimo-band img { display: none; } }
@@ -560,7 +553,7 @@ main.bleed + .foot { margin-top: 0; }
 .auth-wrap { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100dvh - var(--top-h) - var(--tab-h)); }
 .auth-art { background: var(--ink); color: #fff; padding: 48px; display: grid; align-content: center; gap: 16px; position: relative; overflow: hidden; }
 .auth-art .lead { color: #c7d6cf; max-width: calc(100% - 200px); }
-.auth-art img { position: absolute; right: 24px; bottom: 0; width: 220px; }
+.auth-art img { position: absolute; right: 28px; bottom: 28px; width: 210px; }
 .auth-form { padding: 40px 24px; display: grid; place-items: center; }
 .auth-form form { width: min(400px, 100%); display: grid; gap: 14px; }
 .or { display: flex; align-items: center; gap: 12px; color: var(--ink-3); font-size: .9rem; }
