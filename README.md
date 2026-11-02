@@ -59,6 +59,23 @@ npx vercel dev
 
 Enquanto o passo 2 não estiver feito, o botão "Entrar com Google" avisa que o recurso está sendo configurado.
 
+## Mimo com IA (análise de foto e conversa)
+
+O Mimo confere cada foto ou vídeo de aviso (só aceita fogo ou fumaça e recusa conteúdo impróprio) e conversa com os moradores.
+Configure **uma** destas chaves na Vercel (Settings → Environment Variables):
+
+```
+GEMINI_API_KEY=<chave do Google AI Studio — tem plano gratuito>
+# ou
+ANTHROPIC_API_KEY=<chave da API do Claude>
+```
+
+Sem chave, o chat responde com respostas prontas e as fotos ficam como "não verificadas" para a gestão conferir.
+
+## Proprietário
+
+Rode `database/0009_proprietarios.sql` uma vez para tornar `andreisenna92@gmail.com` (e `projetofirehelp@gmail.com`) proprietários do site.
+
 ## Login e e-mails
 
 Nos e-mails de confirmação e recuperação de senha, o link volta para o site e é tratado automaticamente (`/reset-password` para nova senha).

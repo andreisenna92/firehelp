@@ -56,7 +56,7 @@ const PANES = {
           ${r.description ? html`<p style="margin:0">${r.description}</p>` : ""}
           ${r.fire_report_images?.length ? html`<div class="media-row">${r.fire_report_images.map((m) => isVideo(m.image_url) ? html`<video src="${m.image_url}" controls preload="none"></video>` : html`<a href="${m.image_url}" target="_blank" rel="noopener"><img src="${m.image_url}" alt="" loading="lazy"></a>`)}</div>` : ""}
           <div class="status-row" role="group" aria-label="Mudar situação">${Object.entries(STATUSES).map(([v, [l]]) => html`<button class="chip" data-status="${v}" aria-pressed="${r.status === v}">${l}</button>`)}</div>
-          <div class="row"><a class="link-btn" href="/mapa?o=${r.id}">${icon("map")} Ver no mapa</a><a class="link-btn" href="https://www.google.com/maps?q=${r.latitude},${r.longitude}" target="_blank" rel="noopener">${icon("pin")} Abrir no Google Maps</a><button class="link-btn" data-hide>${icon("trash")} Remover do mapa</button></div>
+          <div class="row"><a class="link-btn" href="/mapa?o=${r.id}">${icon("map")} Ver no mapa</a><a class="link-btn" href="https://www.google.com/maps?q=${r.latitude},${r.longitude}" target="_blank" rel="noopener">${icon("pin")} Abrir no Google Maps</a><button class="link-btn danger" data-hide>${icon("trash")} Excluir aviso</button></div>
         </div>`)}</div>` : html`<div class="empty"><p>Nada aqui. ${filter === "pending" ? "Todos os avisos foram verificados." : ""}</p></div>`}`.s;
     };
     pane.onclick = async (e) => {
@@ -76,8 +76,8 @@ const PANES = {
         } catch { toast("Não foi possível alterar a situação.", "err"); }
       }
       if (e.target.closest("[data-hide]")) {
-        if (!(await confirmDialog(`Remover o aviso ${r.protocol} do mapa público? O histórico fica guardado.`, { ok: "Remover", danger: true }))) return;
-        try { await update("fire_reports", { id: `eq.${r.id}` }, { published: false, deleted_at: new Date().toISOString() }); toast("Aviso removido do mapa."); refresh(); }
+        if (!(await confirmDialog(`Excluir o aviso ${r.protocol}? Ele sai do mapa e das listas. O histórico fica guardado no banco.`, { ok: "Excluir aviso", danger: true }))) return;
+        try { await update("fire_reports", { id: `eq.${r.id}` }, { published: false, deleted_at: new Date().toISOString() }); toast("Aviso excluído."); refresh(); }
         catch { toast("Não foi possível remover.", "err"); }
       }
     };
@@ -183,16 +183,16 @@ const PANES = {
   /* ---------------- membros ---------------- */
   async membros(pane, { refresh }) {
     const rows = await rpc("list_admin_members");
-    const level = { super_admin: "Super admin", admin: "Gestão", member: "Membro" };
+    const level = { super_admin: "Proprietário", admin: "Administrador", member: "Membro" };
     pane.innerHTML = html`<div class="search" style="margin-bottom:14px">${icon("search")}<input class="input" id="mq" type="search" placeholder="Buscar por nome ou e-mail"></div><div id="ml"></div>
-      ${me.isSuper ? "" : html`<p class="tiny">Só o super admin pode promover, rebaixar ou excluir contas. A gestão pode suspender e reativar.</p>`}`.s;
+      ${me.isSuper ? "" : html`<p class="tiny">Só o proprietário pode promover, rebaixar ou excluir contas. Administradores podem suspender e reativar.</p>`}`.s;
     const draw = (t = "") => {
       const list = rows.filter((m) => `${m.full_name} ${m.email}`.toLowerCase().includes(t.toLowerCase()));
       $("#ml", pane).innerHTML = html`<div class="stack">${list.map((m) => html`<div class="card member" data-id="${m.id}">
         ${avatar(m.avatar_url, m.full_name, "md")}
         <div class="info"><b>${m.full_name}</b><span class="tiny">${m.email} · ${level[m.access_level] || "Membro"}${m.blocked ? " · suspenso" : ""}</span></div>
         ${m.id !== me.user.id && m.access_level !== "super_admin" ? html`<div class="row">
-          ${me.isSuper ? html`<button class="btn btn-quiet btn-sm" data-role="${m.access_level === "admin" ? "down" : "up"}">${m.access_level === "admin" ? "Tirar da gestão" : "Tornar gestão"}</button>` : ""}
+          ${me.isSuper ? html`<button class="btn btn-quiet btn-sm" data-role="${m.access_level === "admin" ? "down" : "up"}">${m.access_level === "admin" ? "Tirar de administrador" : "Promover a administrador"}</button>` : ""}
           <button class="btn ${m.blocked ? "btn-line" : "btn-quiet"} btn-sm" data-block="${!m.blocked}">${m.blocked ? "Reativar" : "Suspender"}</button>
           ${me.isSuper ? html`<button class="btn btn-danger btn-sm" data-remove aria-label="Excluir conta de ${m.full_name}">${icon("trash")}</button>` : ""}
         </div>` : ""}

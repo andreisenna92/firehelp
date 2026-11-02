@@ -1,7 +1,7 @@
 // Service worker simples: deixa o app abrir rápido e funcionar com sinal fraco.
 // Dados do banco nunca são guardados em cache — sempre vêm atualizados.
 const CACHE = "firehelp-v1";
-const CORE = ["/", "/styles/app.css", "/app/main.js", "/app/sb.js", "/app/ui.js", "/app/store.js", "/app/config.js", "/assets/mimo-face.webp"];
+const CORE = ["/", "/styles/app.css", "/app/main.js", "/app/sb.js", "/app/ui.js", "/app/store.js", "/app/config.js", "/assets/mimo/rosto.webp"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));

@@ -2,6 +2,7 @@
 import { auth } from "./sb.js";
 import { me, loadMe, onMe, displayName } from "./store.js";
 import { html, icon, avatar, $, $$, toast } from "./ui.js";
+import { mountMimo } from "./mimo.js";
 
 const routes = [
   ["/", "home", "Início"],
@@ -17,7 +18,7 @@ const routes = [
   ["/completar-cadastro", "completar-cadastro", "Completar cadastro", { auth: true }],
   ["/perfil", "perfil", "Meu perfil", { auth: true }],
   ["/mensagens", "mensagens", "Mensagens", { auth: true }],
-  ["/membros", "membros", "Membros", { auth: true }],
+  ["/membros", "membros", "Membros"],
   ["/admin", "admin", "Painel de gestão", { auth: true }],
 ];
 const aliases = { "/entrar": "/auth", "/forum": "/comunidade", "/sobre": "/como-funciona" };
@@ -33,7 +34,7 @@ function match(path) {
 }
 
 /* ---------------- shell ---------------- */
-const NAV = [["/", "Início", "home"], ["/mapa", "Mapa", "map"], ["/noticias", "Notícias", "news"], ["/comunidade", "Comunidade", "chat"], ["/como-funciona", "Como funciona", "info"]];
+const NAV = [["/", "Início", "home"], ["/mapa", "Mapa", "map"], ["/noticias", "Notícias", "news"], ["/comunidade", "Comunidade", "chat"], ["/membros", "Membros", "users"], ["/como-funciona", "Como funciona", "info"]];
 
 function shell() {
   document.body.innerHTML = html`
@@ -41,7 +42,7 @@ function shell() {
   <header class="top">
     <div class="top-in">
       <a href="/" class="brand" aria-label="FireHelp Saquarema, início">
-        <img src="/assets/mimo-face.webp" alt="" width="40" height="40">
+        <img src="/assets/mimo/rosto.webp" alt="" width="40" height="40">
         <span class="brand-txt"><b>FireHelp</b><small>Saquarema</small></span>
       </a>
       <nav class="topnav" aria-label="Principal">${NAV.map(([href, label]) => html`<a href="${href}" data-nav>${label}</a>`)}</nav>
@@ -65,11 +66,11 @@ function shell() {
         </div>
       </div>
       <div class="foot-about">
-        <img src="/assets/mimo-face.webp" alt="" width="48" height="48" loading="lazy">
+        <img src="/assets/mimo/rosto.webp" alt="" width="48" height="48" loading="lazy">
         <p>O FireHelp é uma rede comunitária de Saquarema para avisar, acompanhar e prevenir incêndios. Não substitui os serviços oficiais.</p>
       </div>
       <nav class="foot-links" aria-label="Rodapé">
-        <a href="/como-funciona">Como funciona</a><a href="/mapa">Mapa</a><a href="/reportar">Reportar foco</a><a href="/comunidade">Comunidade</a><a href="/noticias">Notícias</a>
+        <a href="/como-funciona">Como funciona</a><a href="/mapa">Mapa</a><a href="/reportar">Reportar foco</a><a href="/comunidade">Comunidade</a><a href="/membros">Membros</a><a href="/noticias">Notícias</a>
       </nav>
     </div>
   </footer>
@@ -94,7 +95,7 @@ function renderAccount() {
     <details class="acct">
       <summary aria-label="Menu da conta">${avatar(me.profile?.avatar_url, displayName(), "sm")}</summary>
       <div class="acct-menu" role="menu">
-        <p class="acct-name">${displayName()}<small>${me.isSuper ? "Super admin" : me.isStaff ? "Gestão" : "Membro"}</small></p>
+        <p class="acct-name">${displayName()}<small>${me.isSuper ? "Proprietário" : me.isStaff ? "Administrador" : "Membro"}</small></p>
         <a href="/perfil">${icon("user")} Meu perfil</a>
         <a href="/mensagens">${icon("mail")} Mensagens</a>
         <a href="/membros">${icon("users")} Membros</a>
@@ -181,6 +182,7 @@ window.addEventListener("popstate", render);
 /* ---------------- início ---------------- */
 (async () => {
   shell();
+  mountMimo();
   onMe(renderAccount);
   let linkType = null;
   try { linkType = await auth.consumeUrlHash(); } catch { toast("O link de acesso expirou. Peça um novo.", "err"); }

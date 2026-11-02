@@ -12,7 +12,7 @@ export default async function perfil({ el }) {
       <div style="flex:1;min-width:200px">
         <h1 class="h2">${displayName()}</h1>
         <p class="muted small" style="margin:.2rem 0">${me.user.email}</p>
-        <p class="tiny" style="margin:0">${me.isSuper ? "Super admin" : me.isStaff ? "Gestão" : "Membro"} desde ${fmtDate(me.profile?.created_at)}</p>
+        <p class="tiny" style="margin:0">${me.isSuper ? "Proprietário" : me.isStaff ? "Administrador" : "Membro"} desde ${fmtDate(me.profile?.created_at)}</p>
       </div>
       <a class="btn btn-fire" href="/reportar">${icon("flame")} Reportar foco</a>
     </div>

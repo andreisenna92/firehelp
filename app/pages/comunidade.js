@@ -44,7 +44,7 @@ export default async function comunidade({ el, query }) {
           <p>${p.content}</p>
           <div class="topic-foot"><span>${icon("chat")} ${c.length === 1 ? "1 resposta" : `${c.length} respostas`}</span>${last ? html`<span>última ${ago(last)}</span>` : ""}${p.image_url ? html`<span>${icon("image")} foto</span>` : ""}</div>
         </a>`;
-      })}</div>`.s : html`<div class="empty"><img src="/assets/mimo-wave.webp" alt=""><p>Nenhum tópico ${cat === "all" ? "ainda" : "neste assunto"}. Que tal começar a conversa?</p></div>`.s;
+      })}</div>`.s : html`<div class="empty"><img src="/assets/mimo/arvore.webp" alt=""><p>Nenhum tópico ${cat === "all" ? "ainda" : "neste assunto"}. Que tal começar a conversa?</p></div>`.s;
     } catch { list.innerHTML = errorBox().s; }
   }
 

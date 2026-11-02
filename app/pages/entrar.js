@@ -27,7 +27,7 @@ export default async function entrar({ el, query }) {
     <div class="auth-art">
       <h1 class="display" style="font-size:clamp(2.2rem,4vw,3.4rem)">Saquarema se protege junto.</h1>
       <p class="lead">Com uma conta você avisa focos de incêndio, acompanha seus protocolos, conversa com vizinhos e recebe respostas da equipe.</p>
-      <img src="/assets/mimo-wave.webp" alt="" width="220" height="330">
+      <img src="/assets/mimo/acenando.webp" alt="" width="220" height="330">
     </div>
     <div class="auth-form"><form id="af" novalidate></form></div>
   </div>`.s;

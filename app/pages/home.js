@@ -1,4 +1,4 @@
-import { html, icon, raw, statusBadge, lbl, FIRE_TYPES, ago, NEWS_CATS, isVideo, fmtDate, skeleton } from "../ui.js";
+import { html, icon, raw, statusBadge, lbl, FIRE_TYPES, ago, NEWS_CATS, isVideo, fmtDate, skeleton, sevLabel } from "../ui.js";
 import { getReports, getNews, getStats } from "../data.js";
 import { createMap, pinIcon, reportPopup } from "../map.js";
 
@@ -11,6 +11,21 @@ export function occRow(r) {
       <span>${r.neighborhood || shortAddr(r.address) || "Local marcado no mapa"} · ${ago(r.reported_at)}</span>
     </span>
     ${media ? html`<img class="occ-thumb" src="${media}" alt="" loading="lazy">` : html`<span></span>`}
+  </a>`;
+}
+export function reportCard(r) {
+  const media = r.fire_report_images?.[0]?.image_url;
+  return html`<a class="rcard ${r.status === "active" ? "is-hot" : ""}" href="/mapa?o=${r.id}">
+    <div class="rcard-cover">
+      ${media ? (isVideo(media) ? html`<video src="${media}#t=0.5" muted playsinline preload="metadata"></video><span class="rcard-play">${icon("video")}</span>` : html`<img src="${media}" alt="Foto enviada do incêndio" loading="lazy">`)
+        : html`<div class="rcard-empty">${icon("flame")}<span>sem foto</span></div>`}
+      <span class="rcard-badge">${statusBadge(r.status)}</span>
+    </div>
+    <div class="rcard-body">
+      <b>${lbl(FIRE_TYPES, r.type)}</b>
+      <span>${icon("pin")} ${r.neighborhood || shortAddr(r.address) || "Local marcado no mapa"}</span>
+      <small>${ago(r.reported_at)} · nível ${sevLabel(r.severity).toLowerCase()}</small>
+    </div>
   </a>`;
 }
 export const shortAddr = (a) => (a ? a.split(",").slice(0, 2).join(",") : "");
@@ -29,28 +44,36 @@ export function newsCard(n, leadStory = false) {
 export default async function home({ el }) {
   el.innerHTML = html`
   <section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <h1 class="display">Viu fumaça em Saquarema? Avise agora.</h1>
         <p class="lead">O FireHelp junta moradores para avisar focos de incêndio com foto, vídeo e localização, acompanhar cada ocorrência no mapa e prevenir o próximo fogo.</p>
         <div class="hero-cta">
-          <a class="btn btn-fire btn-lg" href="/reportar">${icon("flame")} Reportar um foco</a>
-          <a class="btn btn-line btn-lg" href="/mapa">${icon("map")} Ver o mapa</a>
+          <a class="btn btn-fire btn-lg glow" href="/reportar">${icon("flame")} Reportar um foco</a>
+          <a class="btn btn-ghost btn-lg" href="/mapa">${icon("map")} Ver o mapa</a>
         </div>
-        <p class="hero-note">${icon("phone")} <span>Fogo perto de pessoas, casas ou animais? <a href="tel:193"><b>Ligue 193</b></a> primeiro e depois registre aqui para avisar os vizinhos.</span></p>
+        <p class="hero-note">${icon("phone")} <span>Fogo perto de pessoas, casas ou animais? <a href="tel:193"><b>Ligue 193</b></a> primeiro e depois registre aqui.</span></p>
       </div>
-      <div class="situation" aria-label="Situação atual em Saquarema">
-        <div class="sit-head">
-          <span class="sit-title"><span class="live-dot" id="live"></span> Agora em Saquarema</span>
-          <div class="sit-nums" id="nums">
-            <div class="hot"><b>–</b><small>focos ativos</small></div>
-            <div><b>–</b><small>avisos hoje</small></div>
-            <div><b>–</b><small>resolvidos</small></div>
-          </div>
+      <div class="hero-mimo">
+        <button class="mimo-say" type="button" data-mimo="">Oi! Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção. <b>Fale comigo</b></button>
+        <button class="mimo-big" type="button" data-mimo="" aria-label="Conversar com o Mimo"><img src="/assets/mimo/acenando.webp" alt="Mimo, o mico-leão-dourado bombeiro, acenando" width="330" height="480"></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap situation-wrap">
+    <div class="situation" aria-label="Situação atual em Saquarema">
+      <div class="sit-head">
+        <span class="sit-title"><span class="live-dot" id="live"></span> Agora em Saquarema</span>
+        <div class="sit-nums" id="nums">
+          <div class="hot"><b>–</b><small>focos ativos</small></div>
+          <div><b>–</b><small>avisos hoje</small></div>
+          <div><b>–</b><small>resolvidos</small></div>
+          <div><b>–</b><small>membros</small></div>
         </div>
-        <div class="map" id="home-map" role="region" aria-label="Mapa das ocorrências"></div>
-        <img class="sit-mimo" src="/assets/mimo-pointing.webp" alt="" width="120" height="180">
       </div>
+      <div class="map" id="home-map" role="region" aria-label="Mapa das ocorrências"></div>
     </div>
   </section>
 
@@ -68,7 +91,7 @@ export default async function home({ el }) {
   <section class="section" style="padding-top:8px">
     <div class="wrap">
       <div class="section-head"><h2 class="h2">Últimos avisos</h2><a href="/mapa">Abrir o mapa completo</a></div>
-      <div id="recent">${skeleton(3, 70)}</div>
+      <div id="recent">${skeleton(1, 260)}</div>
     </div>
   </section>
 
@@ -82,7 +105,7 @@ export default async function home({ el }) {
   <section class="section">
     <div class="wrap">
       <div class="mimo-band">
-        <img src="/assets/mimo-thumbs.webp" alt="Mimo, o mico-leão-dourado bombeiro" width="180" height="270" loading="lazy">
+        <img src="/assets/mimo/placa.webp" alt="Mimo, o mico-leão-dourado bombeiro" width="180" height="270" loading="lazy">
         <div>
           <h2 class="h2">O Mimo lembra: a maioria dos incêndios começa pequeno.</h2>
           <ul class="tips">
@@ -102,7 +125,7 @@ export default async function home({ el }) {
   getStats().then((s) => {
     if (!alive) return;
     const nums = el.querySelectorAll("#nums b");
-    [s.active, s.today, s.resolved].forEach((v, i) => { nums[i].textContent = v; });
+    [s.active, s.today, s.resolved, s.people].forEach((v, i) => { nums[i].textContent = v; });
     el.querySelector("#live").classList.toggle("hot", s.active > 0);
   }).catch(() => {});
 
@@ -110,8 +133,8 @@ export default async function home({ el }) {
     if (!alive) return;
     const recent = el.querySelector("#recent");
     recent.innerHTML = reports.length
-      ? html`<div class="occ-list">${reports.slice(0, 5).map(occRow)}</div>`.s
-      : html`<div class="empty"><img src="/assets/mimo-wave.webp" alt=""><p>Nenhum aviso registrado ainda. Se vir fumaça ou fogo, você pode ser a primeira pessoa a avisar.</p><a class="btn btn-fire" href="/reportar">Reportar um foco</a></div>`.s;
+      ? html`<div class="report-grid">${reports.slice(0, 6).map(reportCard)}</div>`.s
+      : html`<div class="empty"><img src="/assets/mimo/deitado.webp" alt=""><p>Nenhum aviso registrado ainda. Se vir fumaça ou fogo, você pode ser a primeira pessoa a avisar.</p><a class="btn btn-fire" href="/reportar">Reportar um foco</a></div>`.s;
     try {
       const { L, map } = await createMap(el.querySelector("#home-map"), { zoom: 11, scrollZoom: false });
       if (!alive) { map.remove(); return; }

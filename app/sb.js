@@ -28,7 +28,7 @@ export class ApiError extends Error {
 }
 
 let refreshing = null;
-async function token() {
+export async function token() {
   if (!session) return null;
   if (session.expires_at - 60 > Date.now() / 1000) return session.access_token;
   refreshing ??= (async () => {

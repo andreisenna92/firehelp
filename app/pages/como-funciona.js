@@ -9,7 +9,7 @@ export default async function comoFunciona({ el }) {
         <h1 class="display" style="font-size:clamp(2.2rem,5vw,3.6rem)">Como o FireHelp funciona</h1>
         <p class="lead">Uma rede de moradores de Saquarema que se avisam quando aparece fumaça ou fogo, acompanham cada ocorrência no mapa e aprendem juntos a evitar o próximo incêndio.</p>
       </div>
-      <img src="/assets/mimo-wave.webp" alt="Mimo, o mico-leão-dourado bombeiro, acenando" width="150" height="225" style="width:150px">
+      <img src="/assets/mimo/acenando.webp" alt="Mimo, o mico-leão-dourado bombeiro, acenando" width="150" height="225" style="width:150px">
     </div>
 
     <div class="how-block">

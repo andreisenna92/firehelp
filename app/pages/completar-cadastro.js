@@ -9,7 +9,7 @@ const maskCpf = (v) => v.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d)/, 
 export default async function completarCadastro({ el }) {
   if (!me.needsCpf) { go(next(), { replace: true }); return; }
   el.innerHTML = html`<section class="wrap pad" style="max-width:480px">
-    <img src="/assets/mimo-wave.webp" alt="" width="110" height="165" style="width:110px;margin-bottom:8px">
+    <img src="/assets/mimo/acenando.webp" alt="" width="110" height="165" style="width:110px;margin-bottom:8px">
     <h1 class="h1">Falta só um passo</h1>
     <p class="lead">Para avisar focos e participar da comunidade, confirme seu nome e CPF. O CPF serve só para evitar contas falsas: é guardado de forma protegida e nunca aparece para ninguém.</p>
     <form class="stack" id="cf" style="margin-top:22px" novalidate>

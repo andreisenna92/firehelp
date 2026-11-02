@@ -1,5 +1,5 @@
 import { html, icon, toast, FIRE_TYPES, SEVERITIES, $, esc } from "../ui.js";
-import { insert, upload, auth } from "../sb.js";
+import { insert, upload, auth, token } from "../sb.js";
 import { SAQUAREMA, SAQUAREMA_BOUNDS as B } from "../config.js";
 import { createMap, pinIcon } from "../map.js";
 
@@ -44,8 +44,12 @@ export default async function reportar({ el }) {
       </div>
     </section>
     <section class="rstep" data-step="media">
-      <span class="rstep-n">4</span><h2>Fotos ou vídeo <span class="muted small">(recomendado)</span></h2>
+      <span class="rstep-n">4</span><h2>Foto ou vídeo do fogo</h2>
       <div class="rstep-body">
+        <div class="mimo-check" id="mimo-check">
+          <img src="/assets/mimo/lupa.webp" alt="" width="84" height="84" id="mc-img">
+          <p id="mc-txt">Mande pelo menos uma foto ou vídeo. Eu, o Mimo, confiro se aparece fogo ou fumaça antes de publicar — fotos de outras coisas não são aceitas.</p>
+        </div>
         <label class="drop" id="drop">
           ${icon("camera")}
           <span><b>Tirar foto, gravar ou escolher arquivos</b><br><span class="small muted">Até ${MAX_FILES} arquivos. Vídeos de até 50 MB.</span></span>
@@ -143,13 +147,45 @@ export default async function reportar({ el }) {
       const video = f.type.startsWith("video/");
       if (!video && !f.type.startsWith("image/")) continue;
       if (video && f.size > MAX_VIDEO) { toast(`O vídeo "${f.name}" passa de 50 MB. Grave um trecho mais curto.`, "err"); continue; }
-      s.files.push({ file: f, video, url: URL.createObjectURL(f) });
+      const item = { file: f, video, url: URL.createObjectURL(f), status: "checking", id: Math.random().toString(36).slice(2) };
+      s.files.push(item);
+      analyze(item);
     }
     drawThumbs();
   }
+  const ST = { checking: ["Mimo analisando…", "st-pending"], ok: ["Fogo/fumaça confirmado", "st-resolved"], unverified: ["Não verificado", "st-verified"] };
   function drawThumbs() {
-    thumbs.innerHTML = s.files.map((x, i) => html`<div class="thumb">${x.video ? html`<video src="${x.url}" muted playsinline preload="metadata"></video><span class="vid-tag">vídeo</span>` : html`<img src="${x.url}" alt="">`}<button type="button" data-rm="${i}" aria-label="Remover arquivo">${icon("x")}</button></div>`.s).join("");
-    mark("media", s.files.length > 0);
+    thumbs.innerHTML = s.files.map((x, i) => html`<div class="thumb ${x.status === "checking" ? "is-checking" : ""}">${x.video ? html`<video src="${x.url}" muted playsinline preload="metadata"></video><span class="vid-tag">vídeo</span>` : html`<img src="${x.url}" alt="">`}<span class="thumb-st ${ST[x.status][1]}" title="${ST[x.status][0]}">${x.status === "checking" ? "…" : x.status === "ok" ? icon("check") : "?"}</span><button type="button" data-rm="${i}" aria-label="Remover arquivo">${icon("x")}</button></div>`.s).join("");
+    mark("media", s.files.some((x) => x.status === "ok" || x.status === "unverified"));
+  }
+  function mimoSays(pose, text, kind = "") {
+    $("#mc-img", el).src = `/assets/mimo/${pose}.webp`;
+    $("#mc-txt", el).textContent = text;
+    $("#mimo-check", el).className = `mimo-check ${kind}`;
+  }
+  async function analyze(item) {
+    mimoSays("lupa", "Deixa eu dar uma olhada nessa imagem… 🔍", "busy");
+    let r;
+    try {
+      const shot = await frameOf(item);
+      const res = await fetch("/api/analisar-foto", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${await token()}` }, body: JSON.stringify(shot) });
+      r = await res.json();
+      if (res.status === 401) r = { unavailable: true, error: r.error };
+    } catch { r = { unavailable: true }; }
+    if (!alive || !s.files.includes(item)) return;
+    if (r.unavailable) {
+      item.status = "unverified";
+      mimoSays("pensando", "Não consegui analisar agora, mas vou deixar a equipe conferir sua imagem. Pode seguir!", "");
+    } else if (r.ok) {
+      item.status = "ok";
+      mimoSays("joinha", r.mimo || "Confirmei: tem fogo ou fumaça. Obrigado por avisar!", "good");
+    } else {
+      URL.revokeObjectURL(item.url);
+      s.files.splice(s.files.indexOf(item), 1);
+      mimoSays(r.improprio ? "escudo" : "pensando", r.mimo || "Não encontrei fogo nem fumaça nessa imagem, então não posso aceitar. Tente outra foto, de um lugar seguro.", "bad");
+      toast(r.improprio ? "Imagem recusada: conteúdo impróprio." : "Imagem recusada: não mostra fogo nem fumaça.", "err");
+    }
+    drawThumbs();
   }
   filesInput.addEventListener("change", () => { addFiles(filesInput.files); filesInput.value = ""; });
   thumbs.addEventListener("click", (e) => {
@@ -170,7 +206,7 @@ export default async function reportar({ el }) {
     e.preventDefault();
     if (s.sending) return;
     const err = $("#form-err", el);
-    const missing = !s.type ? ["type", "Escolha o que está pegando fogo."] : !s.severity ? ["severity", "Escolha o tamanho aproximado."] : !s.coords ? ["loc", "Marque onde é: use sua localização, busque o endereço ou toque no mapa."] : !s.confirmed ? [null, "Confirme que as informações são verdadeiras."] : null;
+    const missing = !s.type ? ["type", "Escolha o que está pegando fogo."] : !s.severity ? ["severity", "Escolha o tamanho aproximado."] : !s.coords ? ["loc", "Marque onde é: use sua localização, busque o endereço ou toque no mapa."] : s.files.some((x) => x.status === "checking") ? ["media", "Espere o Mimo terminar de analisar a imagem."] : !s.files.length ? ["media", "Mande pelo menos uma foto ou vídeo do fogo ou da fumaça."] : !s.confirmed ? [null, "Confirme que as informações são verdadeiras."] : null;
     if (missing) {
       err.hidden = false; err.textContent = missing[1];
       if (missing[0]) $(`.rstep[data-step="${missing[0]}"]`, el).scrollIntoView({ behavior: "smooth", block: "center" });
@@ -211,7 +247,7 @@ export default async function reportar({ el }) {
     s.files.forEach((x) => URL.revokeObjectURL(x.url));
     map?.remove(); map = null;
     el.innerHTML = html`<section class="wrap narrow pad success">
-      <img src="/assets/mimo-thumbs.webp" alt="" width="150" height="225">
+      <img src="/assets/mimo/comemorando.webp" alt="" width="150" height="225">
       <h1 class="h1">Aviso enviado. Obrigado!</h1>
       <p class="lead" style="margin:0">Seu aviso já está no mapa. Guarde o protocolo para acompanhar.</p>
       <p class="protocol">${protocol}</p>
@@ -224,7 +260,7 @@ export default async function reportar({ el }) {
       <p class="small muted">Se o fogo crescer ou ameaçar alguém, <a href="tel:193"><b>ligue 193</b></a>.</p>
     </section>`.s;
     window.scrollTo(0, 0);
-    $("#share", el).addEventListener("click", async () => {
+    $("#share", el)?.addEventListener("click", async () => {
       const data = { title: "Foco de incêndio em Saquarema", text: `Aviso de foco de incêndio no FireHelp (protocolo ${protocol}).`, url: `${location.origin}/mapa?o=${id}` };
       try {
         if (navigator.share) await navigator.share(data);
@@ -256,5 +292,25 @@ async function shrink(file, max = 1600) {
     const blob = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.82));
     return blob ? new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" }) : file;
   } catch { return file; }
+}
+// Uma imagem pequena (foto ou quadro do vídeo) para o Mimo analisar.
+async function frameOf(item, max = 1024) {
+  let src;
+  if (item.video) {
+    src = document.createElement("video");
+    src.muted = true; src.playsInline = true; src.preload = "auto"; src.src = item.url;
+    await new Promise((ok, fail) => { src.onloadeddata = ok; src.onerror = fail; setTimeout(fail, 15000); });
+    src.currentTime = Math.min(1, (src.duration || 2) / 2);
+    await new Promise((ok) => { src.onseeked = ok; setTimeout(ok, 3000); });
+  } else {
+    src = await createImageBitmap(item.file, { imageOrientation: "from-image" });
+  }
+  const w = src.videoWidth || src.width, h = src.videoHeight || src.height;
+  const k = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement("canvas");
+  c.width = Math.round(w * k); c.height = Math.round(h * k);
+  c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
+  const data = c.toDataURL("image/jpeg", 0.8).split(",")[1];
+  return { image: data, mime: "image/jpeg" };
 }
 void esc;
