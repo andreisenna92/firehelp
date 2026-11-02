@@ -1,6 +1,8 @@
 // Ajudantes para as funções de servidor (rodam na Vercel, nunca no navegador).
-export const URL_ = process.env.SUPABASE_URL || "https://c--81bb57ea-0a3d-4324-a8f4-33d6e0715eb8-prod.lovable.cloud";
-export const PUBLIC_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_Hl6BL1qmBzTRgyEEMu9O5g_yStldCSO";
+// As variáveis antigas SUPABASE_URL/SUPABASE_PUBLISHABLE_KEY da Vercel apontam para um banco que não
+// existe mais, por isso o endereço fica fixo aqui (o mesmo do site, em app/config.js).
+export const URL_ = process.env.FIREHELP_SUPABASE_URL || "https://c--81bb57ea-0a3d-4324-a8f4-33d6e0715eb8-prod.lovable.cloud";
+export const PUBLIC_KEY = process.env.FIREHELP_SUPABASE_KEY || "sb_publishable_Hl6BL1qmBzTRgyEEMu9O5g_yStldCSO";
 export const SECRET = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 const authHeaders = (key) => (key.startsWith("eyJ") ? { apikey: key, Authorization: `Bearer ${key}` } : { apikey: key });
