@@ -50,10 +50,15 @@ function ReportPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [address, setAddress] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [municipality, setMunicipality] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [locating, setLocating] = useState(false);
+  const [searchingAddress, setSearchingAddress] = useState(false);
   const [saving, setSaving] = useState(false);
   const [protocol, setProtocol] = useState<string | null>(null);
+  const reverseGeocodeFn = useServerFn(reverseGeocodePoint);
+  const geocodeAddressFn = useServerFn(geocodeAddress);
 
   function useMyLocation() {
     if (!navigator.geolocation) {
@@ -70,7 +75,9 @@ function ReportPage() {
       },
       () => {
         setLocating(false);
-        toast.error("Não conseguimos obter sua localização. Selecione o ponto no mapa.");
+        toast.error(
+          "Não conseguimos obter sua localização. Digite o endereço ou toque no mapa para marcar o ponto.",
+        );
       },
       { enableHighAccuracy: true, timeout: 10000 },
     );
@@ -78,13 +85,39 @@ function ReportPage() {
 
   async function reverseGeocode(point: { lat: number; lng: number }) {
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${point.lat}&lon=${point.lng}&accept-language=pt-BR`,
-      );
-      const data = (await response.json()) as { display_name?: string };
-      if (data.display_name) setAddress(data.display_name);
-    } catch {
-      /* endereço aproximado é opcional */
+      const result = await reverseGeocodeFn({ data: point });
+      if (!result) return;
+      setAddress(result.address);
+      setNeighborhood(result.neighborhood ?? "");
+      setMunicipality(result.municipality ?? "");
+    } catch (error) {
+      console.error(error);
+      toast.error("Não foi possível identificar o endereço. Você pode digitá-lo manualmente.");
+    }
+  }
+
+  async function searchAddress() {
+    const query = address.trim();
+    if (query.length < 4) {
+      toast.error("Digite rua, número, bairro ou ponto de referência para buscar.");
+      return;
+    }
+    setSearchingAddress(true);
+    try {
+      const result = await geocodeAddressFn({ data: { query } });
+      if (!result) {
+        toast.error("Endereço não encontrado. Ajuste o texto ou marque o ponto no mapa.");
+        return;
+      }
+      setAddress(result.address);
+      setNeighborhood(result.neighborhood ?? "");
+      setMunicipality(result.municipality ?? "");
+      setCoords({ lat: result.lat, lng: result.lng });
+    } catch (error) {
+      console.error(error);
+      toast.error("Não foi possível buscar o endereço agora. Marque o ponto no mapa.");
+    } finally {
+      setSearchingAddress(false);
     }
   }
 
