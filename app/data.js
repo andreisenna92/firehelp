@@ -3,15 +3,16 @@ import { q, count } from "./sb.js";
 
 export const REPORT_SELECT = "id,protocol,user_id,type,severity,description,latitude,longitude,address,neighborhood,municipality,status,is_demo,reported_at,resolved_at,fire_report_images(image_url)";
 
-export const getReports = (extra = {}) => q("fire_reports", { select: REPORT_SELECT, order: "reported_at.desc", ...extra });
+// Administradores e o autor também "enxergam" avisos excluídos no banco; aqui eles nunca aparecem.
+export const getReports = (extra = {}) => q("fire_reports", { select: REPORT_SELECT, order: "reported_at.desc", published: "eq.true", deleted_at: "is.null", ...extra });
 export const getNews = (extra = {}) => q("news", { select: "id,slug,title,summary,category,image_url,author_name,published,created_at", published: "eq.true", order: "created_at.desc", ...extra });
 
 export async function getStats() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const [active, todayN, resolved, people] = await Promise.all([
-    count("fire_reports", { status: "eq.active" }),
-    count("fire_reports", { reported_at: `gte.${today.toISOString()}` }),
-    count("fire_reports", { status: "eq.resolved" }),
+    count("fire_reports", { status: "eq.active", published: "eq.true", deleted_at: "is.null" }),
+    count("fire_reports", { reported_at: `gte.${today.toISOString()}`, published: "eq.true", deleted_at: "is.null" }),
+    count("fire_reports", { status: "eq.resolved", published: "eq.true", deleted_at: "is.null" }),
     count("profiles", { deleted_at: "is.null" }),
   ]);
   return { active, today: todayN, resolved, people };
