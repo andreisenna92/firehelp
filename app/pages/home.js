@@ -66,7 +66,6 @@ export default async function home({ el }) {
             <span class="ml-head"><span class="ml-nod"><img src="/assets/mimo/heroi-cabeca.webp" alt="" width="576" height="768"><i class="ml-lid l"></i><i class="ml-lid r"></i></span></span>
             <img class="ml-mao" src="/assets/mimo/heroi-mao.webp" alt="" width="576" height="768">
           </span></span>
-          <span class="ml-emos" aria-hidden="true"></span>
         </button>
       </div>
     </div>
@@ -168,21 +167,18 @@ export default async function home({ el }) {
   return () => { alive = false; stopMimo(); mapRef?.remove(); };
 }
 
-// Mimo do topo: respira, balança, acena, olha para o cursor, pisca e solta emojis.
+// Mimo do topo: respira, balança, acena, olha para o cursor e pisca.
 const FALAS = [
-  "Oi! 👋 Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção.",
-  "Viu fumaça? 📸 Tire uma foto de longe e me mostre — eu confiro pra você!",
-  "A restinga de Saquarema pega fogo rapidinho na seca 🌿 Nada de queimar lixo, combinado?",
-  "Fogo perto de casas ou pessoas? 🚒 Ligue 193 primeiro, depois avise aqui.",
-  "Sou um mico-leão-dourado 🧡 Minha família mora na Mata Atlântica do Rio!",
-  "Bituca de cigarro só no lixo, tá? 🚭 Na beira da estrada vira incêndio.",
+  "Oi! Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção.",
+  "Viu fumaça? Tire uma foto de longe e me mostre — eu confiro pra você!",
+  "A restinga de Saquarema pega fogo rapidinho na seca. Nada de queimar lixo, combinado?",
+  "Fogo perto de casas ou pessoas? Ligue 193 primeiro, depois avise aqui.",
+  "Sou um mico-leão-dourado. Minha família mora na Mata Atlântica do Rio!",
+  "Bituca de cigarro só no lixo, tá? Na beira da estrada vira incêndio.",
 ];
-const EMOJIS_CALMOS = ["🌿", "🧡", "💧", "🌳", "✨", "🍃"];
-const EMOJIS_FESTA = ["🎉", "🧡", "✨", "👋", "🌟", "💛"];
 function animateMimo(root) {
   const live = root.querySelector("#mimo-live");
   const say = root.querySelector("#mimo-say-txt");
-  const emos = root.querySelector(".ml-emos");
   if (!live) return () => {};
   let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0, i = 0, alive = true;
   const timers = new Set();
@@ -202,41 +198,12 @@ function animateMimo(root) {
     raf = requestAnimationFrame(loop);
   };
 
-  // emoji que sobe flutuando, com deriva e giro diferentes a cada vez
-  const floatEmoji = (list = EMOJIS_CALMOS) => {
-    if (!emos || document.hidden) return;
-    const e = document.createElement("span");
-    e.className = "ml-emo"; e.textContent = pick(list);
-    e.style.left = `${rnd(8, 88)}%`;
-    e.style.fontSize = `${rnd(18, 30)}px`;
-    e.style.setProperty("--dx", `${rnd(-40, 40)}px`);
-    e.style.setProperty("--r0", `${rnd(-25, 25)}deg`);
-    e.style.setProperty("--r1", `${rnd(-20, 20)}deg`);
-    e.style.setProperty("--dur", `${rnd(4, 6.5)}s`);
-    emos.append(e); e.addEventListener("animationend", () => e.remove());
-  };
-  const burst = (n = 7) => {
-    for (let k = 0; k < n; k++) {
-      const e = document.createElement("span");
-      e.className = "ml-emo pop"; e.textContent = pick(EMOJIS_FESTA);
-      const ang = (-160 + (140 / (n - 1)) * k) * Math.PI / 180, dist = rnd(80, 130);
-      e.style.left = "52%"; e.style.bottom = "62%";
-      e.style.setProperty("--dx", `${Math.cos(ang) * dist}px`);
-      e.style.setProperty("--dy", `${Math.sin(ang) * dist}px`);
-      e.style.animationDelay = `${k * 40}ms`;
-      emos.append(e); e.addEventListener("animationend", () => e.remove());
-    }
-  };
-  const nextEmoji = () => later(() => { floatEmoji(); nextEmoji(); }, rnd(2200, 4200));
-  nextEmoji();
-
   const blink = () => { live.classList.add("blink"); later(() => live.classList.remove("blink"), 130); };
   const nextBlink = () => later(() => { blink(); if (Math.random() < 0.25) later(blink, 300); nextBlink(); }, rnd(2800, 6000));
   nextBlink();
 
   const party = () => {
     live.classList.remove("party"); void live.offsetWidth; live.classList.add("party");
-    burst();
     later(() => live.classList.remove("party"), 1350);
   };
   const nextParty = () => later(() => { if (!document.hidden) party(); nextParty(); }, rnd(14000, 22000));
@@ -250,7 +217,7 @@ function animateMimo(root) {
   }, 9000);
 
   live.addEventListener("click", () => { party(); blink(); later(() => root.querySelector("#mimo-say")?.click(), 650); });
-  live.addEventListener("pointerenter", () => { live.classList.add("happy"); floatEmoji(["👋", "😊", "🧡"]); });
+  live.addEventListener("pointerenter", () => live.classList.add("happy"));
   live.addEventListener("pointerleave", () => live.classList.remove("happy"));
   addEventListener("pointermove", onMove, { passive: true });
   raf = requestAnimationFrame(loop);
