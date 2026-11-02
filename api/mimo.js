@@ -23,7 +23,7 @@ Assuntos fora de incêndio, prevenção, meio ambiente e uso do site: responda c
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return send(res, 405, { error: "Método não permitido." });
-  if (!iaConfigured()) return send(res, 200, { unavailable: true });
+  if (!iaConfigured()) return send(res, 200, { unavailable: true, reason: "sem_chave" });
   const { messages = [], page = "" } = await readJson(req);
   const history = (Array.isArray(messages) ? messages : [])
     .slice(-10)
@@ -36,6 +36,6 @@ export default async function handler(req, res) {
     return send(res, 200, { reply: reply.trim() || "Hmm, não consegui pensar numa resposta agora. Pode perguntar de outro jeito?" });
   } catch (e) {
     console.error("mimo", e.message);
-    return send(res, 200, { unavailable: true });
+    return send(res, 200, { unavailable: true, reason: "erro_ia", detail: String(e.message).slice(0, 160) });
   }
 }
