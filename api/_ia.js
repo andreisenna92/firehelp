@@ -1,7 +1,8 @@
 // IA usada pelo Mimo. Funciona com Google Gemini (GEMINI_API_KEY, tem plano gratuito)
 // ou com Claude (ANTHROPIC_API_KEY). Configure uma das duas na Vercel.
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// "gemini-flash-latest" acompanha sempre o modelo Flash mais novo; os outros são reserva.
+const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.8-flash"].filter(Boolean);
 const CLAUDE_KEY = process.env.ANTHROPIC_API_KEY || "";
 const CLAUDE_MODEL = process.env.ANTHROPIC_MODEL || "claude-haiku-5-5";
 
@@ -20,17 +21,24 @@ export async function ask({ system, messages, image, json = false, maxTokens = 6
         { text: m.text },
       ],
     }));
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents,
-        generationConfig: { maxOutputTokens: maxTokens, temperature: json ? 0 : 0.6, ...(json ? { responseMimeType: "application/json" } : {}) },
-      }),
-    });
-    const d = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(d.error?.message || `Gemini ${res.status}`);
+    let d, lastErr;
+    for (const model of GEMINI_MODELS) {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents,
+          generationConfig: { maxOutputTokens: maxTokens, temperature: json ? 0 : 0.6, ...(json ? { responseMimeType: "application/json" } : {}) },
+        }),
+      });
+      d = await res.json().catch(() => ({}));
+      if (res.ok) { lastErr = null; break; }
+      lastErr = new Error(d.error?.message || `Gemini ${res.status}`);
+      // modelo aposentado ou inexistente: tenta o próximo da lista
+      if (!(res.status === 404 || /no longer available|not found|not supported/i.test(lastErr.message))) break;
+    }
+    if (lastErr) throw lastErr;
     const cand = d.candidates?.[0];
     if (!cand?.content) return json ? '{"blocked":true}' : ""; // bloqueado pelo filtro de segurança
     return cand.content.parts.map((p) => p.text || "").join("");
