@@ -38,7 +38,7 @@ export function pinIcon(L, status) {
   return L.divIcon({ className: "", html: `<div class="pin pin-${esc(status)}"></div>`, iconSize: [28, 28], iconAnchor: [4, 28], popupAnchor: [10, -26] });
 }
 
-export function reportPopup(r) {
+export function reportPopup(r, { staff = false } = {}) {
   const media = r.fire_report_images?.[0]?.image_url;
   return html`<div class="pop">
     <h4>${lbl(FIRE_TYPES, r.type)}</h4>
@@ -46,6 +46,7 @@ export function reportPopup(r) {
     <p class="tiny">${fmtDateTime(r.reported_at)}</p>
     ${r.description ? html`<p>${r.description}</p>` : ""}
     <p class="tiny">${r.neighborhood || r.address || `${(+r.latitude).toFixed(4)}, ${(+r.longitude).toFixed(4)}`}</p>
+    ${staff ? html`<p><button type="button" class="link-btn danger" data-del-report="${r.id}">Excluir aviso</button></p>` : ""}
     ${media ? (isVideo(media) ? html`<video src="${media}" controls preload="none"></video>` : html`<img src="${media}" alt="Foto enviada pela comunidade" loading="lazy">`) : ""}
   </div>`.s;
 }

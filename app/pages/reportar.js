@@ -48,7 +48,7 @@ export default async function reportar({ el }) {
       <div class="rstep-body">
         <div class="mimo-check" id="mimo-check">
           <img src="/assets/mimo/lupa.webp" alt="" width="84" height="84" id="mc-img">
-          <p id="mc-txt">Mande pelo menos uma foto ou vídeo. Eu, o Mimo, confiro se aparece fogo ou fumaça antes de publicar — fotos de outras coisas não são aceitas.</p>
+          <p id="mc-txt">Mande pelo menos uma foto ou vídeo real do fogo ou da fumaça. Eu, o Mimo, confiro cada imagem — desenhos, prints, memes e fotos de pessoas são recusados.</p>
         </div>
         <label class="drop" id="drop">
           ${icon("camera")}
@@ -153,10 +153,10 @@ export default async function reportar({ el }) {
     }
     drawThumbs();
   }
-  const ST = { checking: ["Mimo analisando…", "st-pending"], ok: ["Fogo/fumaça confirmado", "st-resolved"], unverified: ["Não verificado", "st-verified"] };
+  const ST = { checking: ["Mimo analisando…", "st-pending"], ok: ["Fogo/fumaça confirmado", "st-resolved"] };
   function drawThumbs() {
     thumbs.innerHTML = s.files.map((x, i) => html`<div class="thumb ${x.status === "checking" ? "is-checking" : ""}">${x.video ? html`<video src="${x.url}" muted playsinline preload="metadata"></video><span class="vid-tag">vídeo</span>` : html`<img src="${x.url}" alt="">`}<span class="thumb-st ${ST[x.status][1]}" title="${ST[x.status][0]}">${x.status === "checking" ? "…" : x.status === "ok" ? icon("check") : "?"}</span><button type="button" data-rm="${i}" aria-label="Remover arquivo">${icon("x")}</button></div>`.s).join("");
-    mark("media", s.files.some((x) => x.status === "ok" || x.status === "unverified"));
+    mark("media", s.files.some((x) => x.status === "ok"));
   }
   function mimoSays(pose, text, kind = "") {
     $("#mc-img", el).src = `/assets/mimo/${pose}.webp`;
@@ -170,20 +170,19 @@ export default async function reportar({ el }) {
       const shot = await frameOf(item);
       const res = await fetch("/api/analisar-foto", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${await token()}` }, body: JSON.stringify(shot) });
       r = await res.json();
-      if (res.status === 401) r = { unavailable: true, error: r.error };
-    } catch { r = { unavailable: true }; }
+      if (res.status === 401) r = { ok: false, unavailable: true, mimo: r.error || "Sua sessão expirou. Entre de novo para enviar." };
+      if (res.status >= 500 || res.status === 404) r = { ok: false, unavailable: true };
+    } catch { r = { ok: false, unavailable: true }; }
     if (!alive || !s.files.includes(item)) return;
-    if (r.unavailable) {
-      item.status = "unverified";
-      mimoSays("pensando", "Não consegui analisar agora, mas vou deixar a equipe conferir sua imagem. Pode seguir!", "");
-    } else if (r.ok) {
+    if (r.ok) {
       item.status = "ok";
       mimoSays("joinha", r.mimo || "Confirmei: tem fogo ou fumaça. Obrigado por avisar!", "good");
     } else {
       URL.revokeObjectURL(item.url);
       s.files.splice(s.files.indexOf(item), 1);
-      mimoSays(r.improprio ? "escudo" : "pensando", r.mimo || "Não encontrei fogo nem fumaça nessa imagem, então não posso aceitar. Tente outra foto, de um lugar seguro.", "bad");
-      toast(r.improprio ? "Imagem recusada: conteúdo impróprio." : "Imagem recusada: não mostra fogo nem fumaça.", "err");
+      const pose = r.improprio ? "escudo" : r.unavailable ? "pensando" : "lupa";
+      mimoSays(pose, r.mimo || "Não encontrei um incêndio real nessa imagem, então não posso aceitar.", "bad");
+      toast(r.improprio ? "Imagem recusada: conteúdo impróprio." : r.unavailable ? "A análise do Mimo está indisponível. Tente de novo em instantes." : "Imagem recusada: não mostra um incêndio real.", "err");
     }
     drawThumbs();
   }
@@ -206,7 +205,7 @@ export default async function reportar({ el }) {
     e.preventDefault();
     if (s.sending) return;
     const err = $("#form-err", el);
-    const missing = !s.type ? ["type", "Escolha o que está pegando fogo."] : !s.severity ? ["severity", "Escolha o tamanho aproximado."] : !s.coords ? ["loc", "Marque onde é: use sua localização, busque o endereço ou toque no mapa."] : s.files.some((x) => x.status === "checking") ? ["media", "Espere o Mimo terminar de analisar a imagem."] : !s.files.length ? ["media", "Mande pelo menos uma foto ou vídeo do fogo ou da fumaça."] : !s.confirmed ? [null, "Confirme que as informações são verdadeiras."] : null;
+    const missing = !s.type ? ["type", "Escolha o que está pegando fogo."] : !s.severity ? ["severity", "Escolha o tamanho aproximado."] : !s.coords ? ["loc", "Marque onde é: use sua localização, busque o endereço ou toque no mapa."] : s.files.some((x) => x.status === "checking") ? ["media", "Espere o Mimo terminar de analisar a imagem."] : !s.files.some((x) => x.status === "ok") ? ["media", "Mande pelo menos uma foto ou vídeo do fogo ou da fumaça aprovada pelo Mimo."] : !s.confirmed ? [null, "Confirme que as informações são verdadeiras."] : null;
     if (missing) {
       err.hidden = false; err.textContent = missing[1];
       if (missing[0]) $(`.rstep[data-step="${missing[0]}"]`, el).scrollIntoView({ behavior: "smooth", block: "center" });
@@ -228,6 +227,7 @@ export default async function reportar({ el }) {
         btn.textContent = `Enviando arquivo ${i + 1} de ${s.files.length}…`;
         try {
           const item = s.files[i];
+          if (item.status !== "ok") continue;
           const file = item.video ? item.file : await shrink(item.file);
           const ext = (file.name.split(".").pop() || (item.video ? "mp4" : "jpg")).toLowerCase().replace(/[^a-z0-9]/g, "");
           const url = await upload(`${auth.user.id}/${report.id}/${crypto.randomUUID()}.${ext}`, file);

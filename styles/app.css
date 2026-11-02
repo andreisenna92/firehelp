@@ -84,7 +84,7 @@ main:focus-visible { outline: none; }
 .top { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .top-in { width: min(var(--wrap), 100% - 24px); margin-inline: auto; height: var(--top-h); display: flex; align-items: center; gap: 20px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
-.brand img { border-radius: 50%; background: var(--gold-soft); }
+.brand > img { border-radius: 50%; background: var(--gold-soft); }
 .brand-txt { display: grid; line-height: 1; }
 .brand-txt b { font-family: var(--f-display); font-weight: 850; font-stretch: 120%; font-size: 1.28rem; letter-spacing: -0.02em; }
 .brand-txt small { font-size: .78rem; color: var(--ink-2); margin-top: 3px; font-weight: 700; }
@@ -602,9 +602,20 @@ a.card:hover { box-shadow: 0 0 0 1px rgba(233, 162, 27, .45), 0 12px 30px -16px 
 .btn-fire:hover { box-shadow: 0 10px 28px -6px rgba(255, 70, 40, .8); }
 .news-card .ph { box-shadow: 0 16px 34px -22px rgba(18, 51, 43, .6); }
 .news-card:hover .ph { box-shadow: 0 0 0 2px rgba(233, 162, 27, .5), 0 0 30px -8px rgba(233, 162, 27, .55); }
-.brand img { box-shadow: 0 0 0 2px #fff, 0 0 14px rgba(233, 162, 27, .55); }
+
 .mimo-band { background: radial-gradient(80% 120% at 0% 100%, rgba(233, 162, 27, .35), transparent 60%), var(--gold-soft); box-shadow: 0 0 0 1px #f2d48a, 0 20px 40px -26px rgba(185, 110, 0, .6); }
 .foot { background: radial-gradient(60% 120% at 100% 0%, rgba(233, 162, 27, .14), transparent 60%), var(--ink); }
 .report-head { background: radial-gradient(50% 120% at 100% 0%, rgba(212, 42, 28, .4), transparent 60%), radial-gradient(40% 100% at 0% 100%, rgba(233, 162, 27, .25), transparent 60%), var(--ink); }
 .auth-art { background: radial-gradient(60% 60% at 80% 85%, rgba(233, 162, 27, .45), transparent 70%), var(--ink); }
 .auth-art img { filter: drop-shadow(0 0 30px rgba(233, 162, 27, .45)); }
+
+/* Mimo animado no cabeçalho */
+.brand-mimo { position: relative; display: block; height: 56px; aspect-ratio: 184 / 114; margin: 2px -4px 0 0; filter: drop-shadow(0 2px 6px rgba(233, 140, 27, .35)); animation: mimoBob 4s ease-in-out infinite; transform-origin: 60% 100%; }
+.brand-mimo img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.brand-hand { transform-origin: 26% 62%; animation: mimoWave 6s ease-in-out infinite; }
+.brand:hover .brand-hand { animation-duration: 1.2s; }
+.brand:hover .brand-mimo { animation: mimoHop .6s ease-out; }
+@keyframes mimoBob { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-2.5deg) translateY(-1px); } }
+@keyframes mimoWave { 0%, 55%, 100% { transform: rotate(0); } 62% { transform: rotate(-14deg); } 70% { transform: rotate(10deg); } 78% { transform: rotate(-12deg); } 86% { transform: rotate(8deg); } 93% { transform: rotate(0); } }
+@keyframes mimoHop { 40% { transform: translateY(-4px) rotate(-4deg); } }
+@media (max-width: 860px) { .brand-mimo { height: 48px; } }

@@ -2,6 +2,9 @@ import { html, icon, STATUSES, FIRE_TYPES, skeleton, errorBox } from "../ui.js";
 import { getReports } from "../data.js";
 import { createMap, pinIcon, reportPopup } from "../map.js";
 import { occRow } from "./home.js";
+import { me, loadMe } from "../store.js";
+import { update } from "../sb.js";
+import { confirmDialog, toast } from "../ui.js";
 
 export const bleed = true;
 
@@ -57,7 +60,7 @@ export default async function mapa({ el, query }) {
     if (!map) return;
     layer.clearLayers(); markers.clear();
     rows.forEach((r) => {
-      const m = L.marker([r.latitude, r.longitude], { icon: pinIcon(L, r.status) }).bindPopup(reportPopup(r));
+      const m = L.marker([r.latitude, r.longitude], { icon: pinIcon(L, r.status) }).bindPopup(reportPopup(r, { staff: me.isStaff }));
       m.on("click", () => select(r.id, false));
       m.addTo(layer); markers.set(r.id, m);
     });
@@ -97,6 +100,18 @@ export default async function mapa({ el, query }) {
     layer = L.layerGroup().addTo(map);
   } catch { el.querySelector("#big-map").innerHTML = html`<p style="padding:20px">Mapa indisponível agora.</p>`.s; }
 
+  const onDel = async (e) => {
+    const b = e.target.closest("[data-del-report]");
+    if (!b) return;
+    const r = reports.find((x) => x.id === b.dataset.delReport);
+    if (!r || !(await confirmDialog(`Excluir o aviso ${r.protocol}? Ele sai do mapa e das listas.`, { ok: "Excluir aviso", danger: true }))) return;
+    try {
+      await update("fire_reports", { id: `eq.${r.id}` }, { published: false, deleted_at: new Date().toISOString() });
+      reports = reports.filter((x) => x !== r); map.closePopup(); draw(); toast("Aviso excluído.");
+    } catch { toast("Não foi possível excluir. Só administradores podem excluir avisos.", "err"); }
+  };
+  el.addEventListener("click", onDel, true);
+  await (me.ready ? null : loadMe());
   try {
     reports = await getReports();
     if (!alive) return;
@@ -107,5 +122,5 @@ export default async function mapa({ el, query }) {
     if (alive) listEl.innerHTML = errorBox().s;
   }
 
-  return () => { alive = false; map?.remove(); };
+  return () => { alive = false; el.removeEventListener("click", onDel, true); map?.remove(); };
 }
