@@ -12,7 +12,7 @@ export const iaConfigured = () => Boolean(GEMINI_KEY || CLAUDE_KEY);
  * Envia instruções + conversa (+ imagem opcional) e devolve o texto da resposta.
  * messages: [{ role: "user" | "assistant", text }]
  */
-export async function ask({ system, messages, image, json = false, maxTokens = 600 }) {
+export async function ask({ system, messages, image, json = false, maxTokens = 600, fast = false }) {
   if (GEMINI_KEY) {
     const contents = messages.map((m, i) => ({
       role: m.role === "assistant" ? "model" : "user",
@@ -22,7 +22,9 @@ export async function ask({ system, messages, image, json = false, maxTokens = 6
       ],
     }));
     let d, lastErr;
-    const tries = GEMINI_MODELS.flatMap((m) => [m, m]); // cada modelo tenta 2 vezes
+    // Conversa: começa pelo modelo mais rápido. Análise de foto: pelo mais preciso.
+    const order = fast ? [...GEMINI_MODELS].sort((a, b) => /lite/.test(b) - /lite/.test(a)) : GEMINI_MODELS;
+    const tries = order.flatMap((m) => [m, m]); // cada modelo tenta 2 vezes
     const deadline = Date.now() + 40000;
     for (let i = 0; i < tries.length; i++) {
       const model = tries[i];

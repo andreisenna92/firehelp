@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   if (!history.length || history.at(-1).role !== "user") return send(res, 400, { error: "Mensagem vazia." });
   while (history[0]?.role === "assistant") history.shift();
   try {
-    const reply = await ask({ system: `${SYSTEM}\n\nA pessoa está na página: ${String(page).slice(0, 60) || "/"}.`, messages: history, maxTokens: 500 });
+    const reply = await ask({ system: `${SYSTEM}\n\nA pessoa está na página: ${String(page).slice(0, 60) || "/"}.`, messages: history, maxTokens: 500, fast: true });
     return send(res, 200, { reply: reply.trim() || "Hmm, não consegui pensar numa resposta agora. Pode perguntar de outro jeito?" });
   } catch (e) {
     console.error("mimo", e.message);
