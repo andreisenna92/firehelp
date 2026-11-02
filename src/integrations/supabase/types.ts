@@ -608,6 +608,10 @@ export type Database = {
     }
     Functions: {
       claim_super_admin: { Args: never; Returns: boolean }
+      complete_identity: {
+        Args: { cpf: string; full_name: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -630,6 +634,7 @@ export type Database = {
           id: string
         }[]
       }
+      needs_identity: { Args: { _user_id: string }; Returns: boolean }
       prepare_member_removal: {
         Args: { target_id: string }
         Returns: undefined

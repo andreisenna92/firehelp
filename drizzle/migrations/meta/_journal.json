@@ -57,6 +57,13 @@
       "when": 1793541886629,
       "tag": "0007_protected_super_admin_and_alert_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793646171609,
+      "tag": "0008_google_login_first_access_cpf",
+      "breakpoints": true
     }
   ]
 }
