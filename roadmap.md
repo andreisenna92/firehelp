@@ -1,8 +1,9 @@
 # Requested functional update
 
-- [ ] Protect the verified projetofirehelp@gmail.com account as super administrator; restrict administrator promotions and demotions to it without changing login.
+- [x] Apply user-supplied SQL migration for Google login with first-access CPF completion (0008_google_login_first_access_cpf), no code changes.
+- [x] Protect verified projetofirehelp@gmail.com as super admin via migration 0007 (role changes and member removal restricted; super admin protected).
 - [ ] Extend existing administration for news publishing/images and alert creation/editing/deletion, preserving data and history.
-- [ ] Replace Leaflet with Google Maps and preserve report markers and manual selection; connection setup is pending.
+- [ ] Replace Leaflet with Google Maps and preserve report markers and manual selection; connector linked (std_01m6933nvgfg7ts58k2aw4jyfp).
 - [ ] Add required occurrence address, neighborhood/city storage, address lookup and high-accuracy current location.
 - [ ] Verify permission rules and news/alert flows; report Google Maps validation on an authorized deployed origin.
 
