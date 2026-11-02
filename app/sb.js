@@ -116,6 +116,14 @@ export const auth = {
   },
   recover: (email, redirectTo) =>
     call(`/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`, { method: "POST", body: { email }, anon: true }),
+  googleUrl: (redirectTo) => `${URL_}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`,
+  // Verifica se o login com Google está configurado no banco antes de mandar a pessoa para lá.
+  async googleReady(redirectTo) {
+    try {
+      const r = await fetch(this.googleUrl(redirectTo), { redirect: "manual", headers: { apikey: KEY } });
+      return r.type === "opaqueredirect" || (r.status >= 300 && r.status < 400);
+    } catch { return true; }
+  },
   updatePassword: (password) => call("/auth/v1/user", { method: "PUT", body: { password } }),
   async signOut() {
     try { await call("/auth/v1/logout", { method: "POST" }); } catch { /* sessão já expirada */ }
@@ -125,7 +133,7 @@ export const auth = {
   async consumeUrlHash() {
     if (!location.hash.includes("access_token")) return null;
     const p = new URLSearchParams(location.hash.slice(1));
-    const type = p.get("type");
+    const type = p.get("type") || "oauth";
     history.replaceState(null, "", location.pathname + location.search);
     await this.setSession({ access_token: p.get("access_token"), refresh_token: p.get("refresh_token"), expires_in: Number(p.get("expires_in") || 3600) });
     return type;

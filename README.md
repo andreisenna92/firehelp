@@ -48,6 +48,17 @@ Qualquer servidor estático com fallback para `index.html` serve. O mais simples
 npx vercel dev
 ```
 
+## Login com Google
+
+1. No Google Cloud Console, crie um ID do cliente OAuth (Aplicativo da Web) com o URI de redirecionamento
+   `https://c--81bb57ea-0a3d-4324-a8f4-33d6e0715eb8-prod.lovable.cloud/auth/v1/callback`.
+2. No Lovable Cloud (Users → Auth Settings → Google), use suas próprias credenciais (Client ID e Secret)
+   e permita o redirecionamento para `https://firehelpsaqua.vercel.app/**`.
+3. Rode uma vez o SQL `database/0008_login_google.sql`. Ele deixa contas novas do Google entrarem e pede
+   nome e CPF no primeiro acesso (página `/completar-cadastro`) antes de publicar qualquer coisa.
+
+Enquanto o passo 2 não estiver feito, o botão "Entrar com Google" avisa que o recurso está sendo configurado.
+
 ## Login e e-mails
 
 Nos e-mails de confirmação e recuperação de senha, o link volta para o site e é tratado automaticamente (`/reset-password` para nova senha).

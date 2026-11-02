@@ -10,7 +10,7 @@ export default async function comunidade({ el, query }) {
   el.innerHTML = html`<section class="wrap pad" style="max-width:880px">
     <div class="page-head">
       <div><h1 class="h1">Comunidade</h1><p class="lead">Converse com vizinhos sobre fumaça na região, prevenção, meio ambiente e segurança em Saquarema.</p></div>
-      ${me.user ? html`<button class="btn btn-ink" id="new">${icon("plus")} Novo tópico</button>` : html`<a class="btn btn-ink" href="/auth">Entrar para participar</a>`}
+      ${me.user ? (me.needsCpf ? html`<a class="btn btn-ink" href="/completar-cadastro">Completar cadastro para participar</a>` : html`<button class="btn btn-ink" id="new">${icon("plus")} Novo tópico</button>`) : html`<a class="btn btn-ink" href="/auth">Entrar para participar</a>`}
     </div>
     <form class="card stack" id="composer" hidden style="margin-bottom:22px">
       <h2 class="h3">Novo tópico</h2>

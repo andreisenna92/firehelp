@@ -14,6 +14,7 @@ const routes = [
   ["/como-funciona", "como-funciona", "Como funciona"],
   ["/auth", "entrar", "Entrar"],
   ["/reset-password", "nova-senha", "Nova senha"],
+  ["/completar-cadastro", "completar-cadastro", "Completar cadastro", { auth: true }],
   ["/perfil", "perfil", "Meu perfil", { auth: true }],
   ["/mensagens", "mensagens", "Mensagens", { auth: true }],
   ["/membros", "membros", "Membros", { auth: true }],
@@ -140,6 +141,11 @@ async function render() {
       history.replaceState(null, "", "/auth");
       return render();
     }
+    if (me.needsCpf && route.page !== "completar-cadastro" && route.page !== "perfil") {
+      sessionStorage.setItem("fh-next", path + location.search);
+      history.replaceState(null, "", "/completar-cadastro");
+      return render();
+    }
   }
   document.title = `${route.title} · FireHelp Saquarema`;
   try {
@@ -178,10 +184,23 @@ window.addEventListener("popstate", render);
   onMe(renderAccount);
   let linkType = null;
   try { linkType = await auth.consumeUrlHash(); } catch { toast("O link de acesso expirou. Peça um novo.", "err"); }
-  const params = new URLSearchParams(location.hash.slice(1));
-  if (params.get("error_description")) { toast(params.get("error_description"), "err"); history.replaceState(null, "", location.pathname); }
+  const params = new URLSearchParams(location.hash.slice(1) || location.search);
+  if (params.get("error_description") || params.get("error")) {
+    toast("Não foi possível entrar com o Google. Tente de novo ou use e-mail e senha.", "err");
+    console.warn(params.get("error_description") || params.get("error"));
+    history.replaceState(null, "", "/auth");
+  }
   if (linkType === "recovery") { sessionStorage.setItem("fh-recovery", "1"); history.replaceState(null, "", "/reset-password"); }
   else if (linkType === "signup") { toast("E-mail confirmado. Bem-vindo ao FireHelp!"); history.replaceState(null, "", "/"); }
+  if (linkType !== null && linkType !== "recovery") {
+    // Voltou do Google (ou da confirmação de e-mail): vai para onde estava, ou completa o CPF.
+    await loadMe();
+    const next = sessionStorage.getItem("fh-next"); sessionStorage.removeItem("fh-next");
+    if (me.needsCpf) { if (next) sessionStorage.setItem("fh-next", next); history.replaceState(null, "", "/completar-cadastro"); }
+    else if (next && next.startsWith("/") && !next.startsWith("/auth")) history.replaceState(null, "", next);
+    else if (location.pathname === "/auth") history.replaceState(null, "", "/");
+    if (!me.needsCpf) toast("Você entrou.");
+  }
   loadMe();
   render();
 })();

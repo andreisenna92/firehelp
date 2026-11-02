@@ -69,7 +69,7 @@ export default async function topico({ el, params }) {
       </form>
       <hr style="border:0;border-top:2px solid var(--ink);margin:30px 0 20px">
       <h2 class="h2" style="margin-bottom:16px">${comments.length === 1 ? "1 resposta" : `${comments.length} respostas`}</h2>
-      ${me.user ? html`<form class="composer" id="cform">
+      ${me.needsCpf ? html`<a class="btn btn-line" href="/completar-cadastro">Completar cadastro para responder</a>` : me.user ? html`<form class="composer" id="cform">
         <div class="replying" id="replying" hidden><span></span><button type="button" class="link-btn" id="cancel-reply">Cancelar</button></div>
         <textarea class="input" name="msg" rows="3" maxlength="5000" placeholder="Escreva sua resposta" required></textarea>
         <div><button class="btn btn-ink" type="submit">${icon("send")} Responder</button></div>

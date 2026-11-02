@@ -466,10 +466,12 @@ main.bleed + .foot { margin-top: 0; }
 /* acesso */
 .auth-wrap { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100dvh - var(--top-h) - var(--tab-h)); }
 .auth-art { background: var(--ink); color: #fff; padding: 48px; display: grid; align-content: center; gap: 16px; position: relative; overflow: hidden; }
-.auth-art .lead { color: #c7d6cf; }
+.auth-art .lead { color: #c7d6cf; max-width: calc(100% - 200px); }
 .auth-art img { position: absolute; right: 24px; bottom: 0; width: 220px; }
 .auth-form { padding: 40px 24px; display: grid; place-items: center; }
 .auth-form form { width: min(400px, 100%); display: grid; gap: 14px; }
+.or { display: flex; align-items: center; gap: 12px; color: var(--ink-3); font-size: .9rem; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--sand); border-radius: 999px; padding: 4px; }
 .seg button { border: 0; background: none; padding: 9px; border-radius: 999px; font-weight: 700; cursor: pointer; color: var(--ink-2); }
 .seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
