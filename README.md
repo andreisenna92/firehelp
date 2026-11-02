@@ -1,94 +1,60 @@
-# FIREHELP
+# FireHelp Saquarema
 
-**Informação que protege. Comunidade que ajuda.**
+Rede comunitária de Saquarema (RJ) para **avisar focos de incêndio** com foto, vídeo e localização, **acompanhar ocorrências no mapa**, ler **notícias e alertas** e conversar na **comunidade** sobre prevenção.
 
-Plataforma comunitária de Saquarema/RJ para prevenção, informação e comunicação sobre incêndios, preservação ambiental e participação da comunidade.
+## Como o projeto é feito
 
-## Funcionalidades
+Site estático, **sem etapa de build** — HTML, CSS e módulos JavaScript nativos. Abre rápido mesmo com sinal fraco e não quebra no deploy por causa de dependências.
 
-- Login com Google via Supabase Auth.
-- Dashboard com estatísticas, notícias e ocorrências.
-- Mapa interativo de ocorrências.
-- Registro de incidentes com localização, gravidade, descrição e fotos.
-- Notícias e publicações editáveis pela gestão.
-- Comunidade com membros, tópicos, comentários, curtidas, mensagens, eventos e dicas de prevenção.
-- Painel de gestão para ocorrências, notícias, publicações, denúncias e membros.
-- Suspensão de membros e promoção de membros a gestor.
-- Histórico de alterações de status das ocorrências.
-
-## Gestor principal
-
-A conta `andreisenna92@gmail.com` é o gestor principal do FireHelp.
-
-Depois que essa conta fizer o primeiro login pelo Google, execute no SQL Editor do novo projeto Supabase:
-
-```sql
--- arquivo: supabase/admin-bootstrap.sql
+```
+index.html            página única (o roteamento é feito em app/main.js)
+styles/app.css        todo o visual (cores, tipografia, componentes)
+app/
+  config.js           endereço e chave PÚBLICA do banco
+  sb.js               cliente mínimo do Supabase (REST, login, arquivos)
+  store.js            pessoa conectada, papéis e permissões
+  ui.js               ícones, avisos, formatos e rótulos
+  map.js              mapa (Leaflet, servido pelo próprio site)
+  pages/*.js          uma página por arquivo, carregada só quando aberta
+api/                  funções de servidor da Vercel (cadastro e exclusão de conta)
+assets/               mascote Mimo e fontes (Archivo e Atkinson Hyperlegible)
+vendor/leaflet/       biblioteca do mapa
+database/             migrações SQL do banco (não vão para o site publicado)
 ```
 
-Esse script também atualiza o gatilho de novos usuários para que essa conta seja promovida automaticamente a `admin`.
+## Banco de dados
 
-## Supabase
-
-Projeto configurado para:
-
-```text
-https://wjzpkzebsrvixyilnedz.supabase.co
-```
-
-O frontend usa apenas a chave **publishable**. Nunca coloque a `service_role` ou outra chave secreta em variáveis `VITE_*` ou no GitHub.
-
-Copie `.env.example` para `.env` e preencha a chave publicável para desenvolvimento local.
+Os dados (ocorrências, notícias, fórum, membros, mensagens) ficam no backend do Lovable Cloud, configurado em `app/config.js`. A chave ali é a **publishable**, feita para ficar no navegador — a proteção vem das regras de acesso (RLS) do banco.
 
 ## Vercel
 
-Configure estas variáveis em **Settings → Environment Variables**:
+Não precisa de nenhuma variável para o site funcionar. O `vercel.json` já desliga o build e faz as rotas apontarem para o `index.html`.
 
-```text
-VITE_SUPABASE_URL=https://wjzpkzebsrvixyilnedz.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=<chave publishable do novo Supabase>
-VITE_SUPABASE_REDIRECT_URL=https://firehelpsaqua.vercel.app/auth
+Para o **cadastro de novas contas** e a **exclusão de contas** pelo super admin, a Vercel precisa da chave de servidor do banco:
+
+```
+SUPABASE_SERVICE_ROLE_KEY=<chave service_role do backend>
 ```
 
-Para as rotinas server-side, quando forem necessárias:
+Configure em **Vercel → Settings → Environment Variables**. Nunca coloque essa chave no código nem em `app/config.js`. Sem ela, o site mostra uma mensagem clara de "cadastro indisponível" e todo o resto continua funcionando (entrar, reportar, mapa, comunidade, gestão).
 
-```text
-SUPABASE_URL=https://wjzpkzebsrvixyilnedz.supabase.co
-SUPABASE_PUBLISHABLE_KEY=<chave publishable do novo Supabase>
-SUPABASE_SERVICE_ROLE_KEY=<chave secreta somente no ambiente server>
-```
+As variáveis antigas `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` não são mais usadas e podem ser apagadas.
 
-A `SUPABASE_SERVICE_ROLE_KEY` nunca deve ser exposta ao navegador nem ter prefixo `VITE_`.
+## Rodar no computador
 
-## Google OAuth
-
-No Google Cloud OAuth, o URI autorizado é:
-
-```text
-https://wjzpkzebsrvixyilnedz.supabase.co/auth/v1/callback
-```
-
-No Supabase, o Site URL é:
-
-```text
-https://firehelpsaqua.vercel.app
-```
-
-E o redirect permitido é:
-
-```text
-https://firehelpsaqua.vercel.app/**
-```
-
-## Desenvolvimento local
+Qualquer servidor estático com fallback para `index.html` serve. O mais simples:
 
 ```bash
-npm install
-npm run dev
+npx vercel dev
 ```
 
-A aplicação roda por padrão em `http://localhost:3000`.
+## Login e e-mails
 
-## Publicação
+Nos e-mails de confirmação e recuperação de senha, o link volta para o site e é tratado automaticamente (`/reset-password` para nova senha).
 
-O projeto é independente e pode ser publicado diretamente no GitHub e na Vercel. Não depende de editor ou hospedagem de terceiros.
+## Gestão
+
+- **Super admin:** `projetofirehelp@gmail.com` — promove/rebaixa gestão e exclui contas.
+- **Gestão:** verifica avisos, muda a situação das ocorrências, publica notícias e alertas, modera a comunidade e suspende membros.
+
+Painel em `/admin`.
