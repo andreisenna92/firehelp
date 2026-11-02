@@ -42,7 +42,7 @@ function shell() {
   <header class="top">
     <div class="top-in">
       <a href="/" class="brand" aria-label="FireHelp Saquarema, início">
-        <span class="brand-mimo" aria-hidden="true"><span class="bm-ring"></span><span class="bm-clip"><img src="/assets/mimo/selo-corpo.webp" alt="" width="221" height="169"><img class="brand-hand" src="/assets/mimo/selo-mao.webp" alt="" width="221" height="169"></span></span>
+        <span class="brand-mimo" aria-hidden="true"><span class="bm-ring"></span><span class="bm-clip"><img src="/assets/mimo/selo-corpo.webp" alt="" width="221" height="169"></span><img class="brand-hand" src="/assets/mimo/selo-luva.webp" alt="" width="120" height="113"></span>
         <span class="brand-txt"><b>FireHelp</b><small>Saquarema</small></span>
       </a>
       <nav class="topnav" aria-label="Principal">${NAV.map(([href, label]) => html`<a href="${href}" data-nav>${label}</a>`)}</nav>

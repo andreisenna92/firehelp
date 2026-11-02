@@ -56,8 +56,16 @@ export default async function home({ el }) {
         <p class="hero-note">${icon("phone")} <span>Fogo perto de pessoas, casas ou animais? <a href="tel:193"><b>Ligue 193</b></a> primeiro e depois registre aqui.</span></p>
       </div>
       <div class="hero-mimo">
-        <button class="mimo-say" type="button" data-mimo="">Oi! Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção. <b>Fale comigo</b></button>
-        <button class="mimo-big" type="button" data-mimo="" aria-label="Conversar com o Mimo"><img src="/assets/mimo/acenando.webp" alt="Mimo, o mico-leão-dourado bombeiro, acenando" width="330" height="480"></button>
+        <button class="mimo-say" type="button" data-mimo="" id="mimo-say"><span id="mimo-say-txt">Oi! Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção.</span> <b>Fale comigo</b></button>
+        <button class="mimo-live" type="button" id="mimo-live" aria-label="Conversar com o Mimo">
+          <span class="ml-glow" aria-hidden="true"></span>
+          <span class="ml-rig" aria-hidden="true">
+            <img class="ml-cauda" src="/assets/mimo/heroi-cauda.webp" alt="" width="576" height="768">
+            <img class="ml-corpo" src="/assets/mimo/heroi-corpo.webp" alt="" width="576" height="768">
+            <span class="ml-head"><span class="ml-nod"><img src="/assets/mimo/heroi-cabeca.webp" alt="" width="576" height="768"><i class="ml-lid l"></i><i class="ml-lid r"></i></span></span>
+            <img class="ml-mao" src="/assets/mimo/heroi-mao.webp" alt="" width="576" height="768">
+          </span>
+        </button>
       </div>
     </div>
   </section>
@@ -154,5 +162,57 @@ export default async function home({ el }) {
       : html`<p class="muted">Ainda não há notícias publicadas.</p>`.s;
   }).catch(() => { if (alive) el.querySelector("#news").innerHTML = ""; });
 
-  return () => { alive = false; mapRef?.remove(); };
+  const stopMimo = animateMimo(el);
+  return () => { alive = false; stopMimo(); mapRef?.remove(); };
+}
+
+// Mimo do topo: olha para o cursor, pisca, acena, balança a cauda e reage ao toque.
+const FALAS = [
+  "Oi! Eu sou o Mimo. Posso te ajudar a avisar um foco ou tirar dúvidas sobre prevenção.",
+  "Viu fumaça? Tire uma foto de longe e me mostre — eu confiro pra você!",
+  "Sabia? A restinga de Saquarema pega fogo rapidinho na seca. Nada de queimar lixo!",
+  "Fogo perto de casas ou pessoas? Ligue 193 primeiro, depois avise aqui.",
+  "Eu sou um mico-leão-dourado: minha família mora na Mata Atlântica do Rio. 🧡",
+];
+function animateMimo(root) {
+  const live = root.querySelector("#mimo-live");
+  const say = root.querySelector("#mimo-say-txt");
+  if (!live) return () => {};
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0, i = 0;
+  const onMove = (e) => {
+    const r = live.getBoundingClientRect();
+    const px = (e.touches?.[0] || e).clientX, py = (e.touches?.[0] || e).clientY;
+    tx = Math.max(-1, Math.min(1, (px - (r.left + r.width * 0.62)) / (innerWidth * 0.5)));
+    ty = Math.max(-1, Math.min(1, (py - (r.top + r.height * 0.3)) / (innerHeight * 0.6)));
+  };
+  const loop = () => {
+    cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08; // segue o cursor com suavidade
+    live.style.setProperty("--lx", cx.toFixed(3));
+    live.style.setProperty("--ly", cy.toFixed(3));
+    raf = requestAnimationFrame(loop);
+  };
+  const blink = () => { live.classList.add("blink"); setTimeout(() => live.classList.remove("blink"), 120); };
+  let blinkT = 0;
+  const scheduleBlink = () => { blinkT = setTimeout(() => { blink(); if (Math.random() < 0.25) setTimeout(blink, 280); scheduleBlink(); }, 2600 + Math.random() * 3200); };
+  const talk = setInterval(() => {
+    if (document.hidden || !say) return;
+    i = (i + 1) % FALAS.length;
+    say.parentElement.classList.add("swap");
+    setTimeout(() => { say.textContent = FALAS[i]; say.parentElement.classList.remove("swap"); }, 250);
+  }, 8000);
+  const poke = () => {
+    live.classList.remove("hop"); void live.offsetWidth; live.classList.add("hop");
+    blink();
+    setTimeout(() => root.querySelector("#mimo-say")?.click(), 380); // abre a conversa
+  };
+  live.addEventListener("click", poke);
+  live.addEventListener("pointerenter", () => live.classList.add("happy"));
+  live.addEventListener("pointerleave", () => live.classList.remove("happy"));
+  if (!reduce) {
+    addEventListener("pointermove", onMove, { passive: true });
+    raf = requestAnimationFrame(loop);
+    scheduleBlink();
+  }
+  return () => { cancelAnimationFrame(raf); clearTimeout(blinkT); clearInterval(talk); removeEventListener("pointermove", onMove); };
 }

@@ -271,10 +271,33 @@ a.card:hover { border-color: var(--ink-3); }
 .hero-note .ic { color: #ff7a6a; margin-top: 3px; }
 .hero-note a { color: #fff; }
 .hero-mimo { position: relative; display: grid; justify-items: center; }
-.mimo-big { background: none; border: 0; padding: 0; cursor: pointer; position: relative; }
-.mimo-big::before { content: ""; position: absolute; inset: 12% 8% 6%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 196, 70, .65), rgba(233, 120, 27, .25) 45%, transparent 70%); filter: blur(18px); z-index: -1; animation: breathe 4s ease-in-out infinite; }
-.mimo-big img { width: min(330px, 70vw); height: auto; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .45)); transition: transform .3s; transform-origin: 50% 90%; }
-.mimo-big:hover img { transform: rotate(-3deg) scale(1.03); }
+/* Mimo vivo: camadas animadas (corpo, cabeça, mão, cauda) */
+.mimo-live { --lx: 0; --ly: 0; position: relative; display: block; width: min(320px, 68vw); aspect-ratio: 3 / 4; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ml-glow { position: absolute; inset: 14% 4% 4%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 196, 70, .6), rgba(233, 120, 27, .22) 45%, transparent 70%); filter: blur(22px); animation: breathe 4.2s ease-in-out infinite; }
+.ml-rig { position: absolute; inset: 0; transform-origin: 50% 96%; animation: mlBreath 3.6s ease-in-out infinite; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .45)); }
+.ml-rig > img, .ml-head, .ml-nod, .ml-nod img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ml-corpo { animation: mlSway 7.3s ease-in-out infinite; transform-origin: 50% 96%; }
+.ml-cauda { transform-origin: 24.7% 67.4%; animation: mlTail 2.9s ease-in-out infinite alternate; }
+.ml-head { transform-origin: 59.9% 45.3%; transform: rotate(calc(var(--lx) * 5deg)) translate(calc(var(--lx) * 1.2%), calc(var(--ly) * 1%)); }
+.ml-nod { animation: mlNod 5.3s ease-in-out infinite; transform-origin: 59.9% 45.3%; }
+.ml-mao { transform-origin: 16.1% 34.4%; animation: mlWave 5.4s ease-in-out infinite; }
+.ml-lid { position: absolute; width: 12.2%; height: 8.6%; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: linear-gradient(#e8823a, #d8692a 70%, #b8521a); border-bottom: 2.5px solid #3a1806; box-shadow: 0 1px 0 rgba(0,0,0,.25); transform: scaleY(0); transform-origin: 50% 0; transition: transform .07s ease-in; }
+.ml-lid.l { left: 51.6%; top: 20%; rotate: -10deg; }
+.ml-lid.r { left: 69.4%; top: 25%; rotate: -12deg; }
+.mimo-live.blink .ml-lid { transform: scaleY(1); }
+.mimo-live.happy .ml-mao { animation: mlWaveFast 1.1s ease-in-out infinite; }
+.mimo-live.happy .ml-cauda { animation-duration: 1.2s; }
+.mimo-live.hop .ml-rig { animation: mlHop .65s cubic-bezier(.3, .6, .4, 1), mlBreath 3.6s ease-in-out .65s infinite; }
+.mimo-live:focus-visible { outline-offset: 6px; border-radius: 20px; }
+@keyframes mlBreath { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.008, 1.018) translateY(-.4%); } }
+@keyframes mlSway { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-.8deg); } }
+@keyframes mlTail { from { transform: rotate(-3deg); } to { transform: rotate(4.5deg); } }
+@keyframes mlNod { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-1.6deg); } 65% { transform: rotate(1.2deg); } }
+@keyframes mlWave { 0%, 48%, 100% { transform: rotate(0); } 56% { transform: rotate(-13deg); } 64% { transform: rotate(7deg); } 72% { transform: rotate(-11deg); } 80% { transform: rotate(5deg); } 88% { transform: rotate(-2deg); } }
+@keyframes mlWaveFast { 0%, 100% { transform: rotate(5deg); } 50% { transform: rotate(-14deg); } }
+@keyframes mlHop { 0% { transform: translateY(0) scale(1, 1); } 25% { transform: translateY(0) scale(1.04, .94); } 55% { transform: translateY(-9%) scale(.97, 1.04); } 85% { transform: translateY(0) scale(1.03, .97); } 100% { transform: translateY(0) scale(1, 1); } }
+.mimo-say.swap { opacity: .0; transform: translateY(4px); }
+.mimo-say { transition: opacity .25s, transform .25s; }
 @keyframes breathe { 50% { transform: scale(1.08); opacity: .8; } }
 .mimo-say { position: relative; z-index: 2; margin-bottom: -6px; max-width: 300px; text-align: left; background: rgba(255, 255, 255, .96); color: var(--ink); border: 0; border-radius: 18px 18px 18px 4px; padding: 12px 16px; font-size: .95rem; line-height: 1.4; cursor: pointer; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .5), 0 0 0 4px rgba(233, 162, 27, .25); animation: bob 3.5s ease-in-out infinite; }
 .mimo-say b { color: var(--fire); white-space: nowrap; }
@@ -301,8 +324,7 @@ a.card:hover { border-color: var(--ink-3); }
   .hero { padding: 26px 0 84px; }
   .hero-grid { grid-template-columns: 1fr; gap: 6px; }
   .hero-mimo { grid-row: 1; grid-template-columns: auto 1fr; align-items: end; justify-items: start; gap: 6px; }
-  .hero-mimo .mimo-big { grid-column: 1; grid-row: 1; }
-  .mimo-big img { width: 120px; }
+  .hero-mimo .mimo-live { grid-column: 1; grid-row: 1; width: 130px; }
   .mimo-say { grid-column: 2; grid-row: 1; margin: 0 0 30px; font-size: .88rem; padding: 10px 12px; border-radius: 18px 18px 18px 4px; }
   .situation .map { height: 300px; }
   .sit-nums { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); }
@@ -609,15 +631,15 @@ a.card:hover { box-shadow: 0 0 0 1px rgba(233, 162, 27, .45), 0 12px 30px -16px 
 .auth-art { background: radial-gradient(60% 60% at 80% 85%, rgba(233, 162, 27, .45), transparent 70%), var(--ink); }
 .auth-art img { filter: drop-shadow(0 0 30px rgba(233, 162, 27, .45)); }
 
-/* Mimo animado no cabeçalho: selo dourado com o Mimo saindo por cima */
-.brand-mimo { --d: 48px; position: relative; display: block; width: var(--d); height: var(--d); margin-top: 8px; flex: none; }
-.bm-ring { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3cf, #f6c453 55%, #e09312); box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(233, 162, 27, .55), 0 4px 14px -2px rgba(233, 140, 27, .65); animation: ringGlow 3.2s ease-in-out infinite; }
-.bm-clip { position: absolute; left: 50%; bottom: 0; width: calc(var(--d) * 1.9); height: calc(var(--d) * 1.6); transform: translateX(-50%);
-  -webkit-mask: radial-gradient(circle calc(var(--d) / 2) at 50% calc(100% - var(--d) / 2), #000 calc(var(--d) / 2 - .5px), transparent calc(var(--d) / 2)), linear-gradient(#000 0 0) top / 100% calc(100% - var(--d) * .45) no-repeat;
-          mask: radial-gradient(circle calc(var(--d) / 2) at 50% calc(100% - var(--d) / 2), #000 calc(var(--d) / 2 - .5px), transparent calc(var(--d) / 2)), linear-gradient(#000 0 0) top / 100% calc(100% - var(--d) * .45) no-repeat; }
+/* Mimo animado no cabeçalho: selo dourado, Mimo saindo por cima, mão inteira por fora */
+.brand-mimo { --d: 48px; position: relative; display: block; width: calc(var(--d) * 1.18); height: var(--d); margin-top: 8px; flex: none; }
+.bm-ring { position: absolute; right: 0; bottom: 0; width: var(--d); height: var(--d); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3cf, #f6c453 55%, #e09312); box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(233, 162, 27, .55), 0 4px 14px -2px rgba(233, 140, 27, .65); animation: ringGlow 3.2s ease-in-out infinite; }
+.bm-clip { position: absolute; right: calc(var(--d) * -.45); bottom: 0; width: calc(var(--d) * 1.9); height: calc(var(--d) * 1.6);
+  -webkit-mask: radial-gradient(circle calc(var(--d) / 2) at calc(100% - var(--d) * .95) calc(100% - var(--d) / 2), #000 calc(var(--d) / 2 - .5px), transparent calc(var(--d) / 2)), linear-gradient(#000 0 0) right top / 62% calc(100% - var(--d) * .45) no-repeat;
+          mask: radial-gradient(circle calc(var(--d) / 2) at calc(100% - var(--d) * .95) calc(100% - var(--d) / 2), #000 calc(var(--d) / 2 - .5px), transparent calc(var(--d) / 2)), linear-gradient(#000 0 0) right top / 62% calc(100% - var(--d) * .45) no-repeat; }
 .bm-clip img { position: absolute; left: 6%; top: 31%; width: 74%; height: auto; transform-origin: 62% 95%; animation: mimoBob 4s ease-in-out infinite; }
-.bm-clip .brand-hand { transform-origin: 30% 72%; animation: mimoWave 6s ease-in-out infinite; }
-.brand:hover .bm-clip img:not(.brand-hand) { animation: mimoHop .7s ease-out; }
+.brand-mimo .brand-hand { position: absolute; left: calc(var(--d) * -.12); top: calc(var(--d) * -.02); width: calc(var(--d) * .5); height: auto; transform-origin: 40% 95%; animation: mimoWave 6s ease-in-out infinite; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25)); z-index: 2; }
+.brand:hover .bm-clip img { animation: mimoHop .7s ease-out; }
 .brand:hover .brand-hand { animation: mimoWave 1.3s ease-in-out infinite; }
 @keyframes mimoBob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-1.5px) rotate(-2deg); } }
 @keyframes mimoWave { 0%, 55%, 100% { transform: rotate(0); } 62% { transform: rotate(-16deg); } 70% { transform: rotate(10deg); } 78% { transform: rotate(-14deg); } 86% { transform: rotate(8deg); } 93% { transform: rotate(0); } }
