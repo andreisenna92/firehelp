@@ -23,18 +23,26 @@ export async function ask({ system, messages, image, json = false, maxTokens = 6
     }));
     let d, lastErr;
     const tries = GEMINI_MODELS.flatMap((m) => [m, m]); // cada modelo tenta 2 vezes
+    const deadline = Date.now() + 40000;
     for (let i = 0; i < tries.length; i++) {
       const model = tries[i];
-      if (i % 2 === 1) await new Promise((r) => setTimeout(r, 700));
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      const left = deadline - Date.now();
+      if (left < 3000) { lastErr = lastErr || new Error("tempo esgotado"); break; }
+      if (i % 2 === 1) await new Promise((r) => setTimeout(r, 600));
+      let res;
+      try {
+        res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: system }] },
           contents,
-          generationConfig: { maxOutputTokens: maxTokens, temperature: json ? 0 : 0.6, ...(json ? { responseMimeType: "application/json" } : {}) },
+          generationConfig: { maxOutputTokens: Math.max(maxTokens, 2048), // modelos que "pensam" gastam parte disso antes de responder
+             temperature: json ? 0 : 0.6, ...(json ? { responseMimeType: "application/json" } : {}) },
         }),
+        signal: AbortSignal.timeout(Math.min(15000, left)),
       });
+      } catch (e) { lastErr = new Error(`demorou demais (${model})`); continue; }
       d = await res.json().catch(() => ({}));
       if (res.ok) { lastErr = null; break; }
       lastErr = new Error(d.error?.message || `Gemini ${res.status}`);
