@@ -115,7 +115,7 @@ export function mountMimo() {
   // Dica de boas-vindas (uma vez por visita)
   setTimeout(() => {
     let off = false; try { off = sessionStorage.getItem("fh-tip-off") === "1"; } catch { /* */ }
-    if (open || off) return;
+    if (open || off || location.pathname === "/") return; // na home o Mimo já fala no topo
     const tip = $("#mimo-tip");
     tip.querySelector("span").textContent = GREETS[location.pathname] || GREETS["/"];
     tip.hidden = false;
