@@ -1,0 +1,69 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790446707504,
+      "tag": "0000_firehelp_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790446742089,
+      "tag": "0001_fire_images_storage_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790790967756,
+      "tag": "0002_community_messages_gestores",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791504486277,
+      "tag": "0003_harden_data_layer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793450451560,
+      "tag": "0004_traditional_accounts_private_cpf",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793450600790,
+      "tag": "0005_restrict_private_registration_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793450762454,
+      "tag": "0006_prevent_removed_accounts_private_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793541886629,
+      "tag": "0007_protected_super_admin_and_alert_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793646171609,
+      "tag": "0008_google_login_first_access_cpf",
+      "breakpoints": true
+    }
+  ]
+}
