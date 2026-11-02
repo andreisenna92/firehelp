@@ -125,6 +125,7 @@ function ReportPage() {
     event.preventDefault();
     if (!user) return;
     if (!type) { toast.error("Escolha o tipo de ocorrência."); return; }
+    if (!address.trim()) { toast.error("Informe o endereço ou local da ocorrência."); return; }
     if (!coords) { toast.error("Informe a localização da ocorrência."); return; }
     if (!confirmed) { toast.error("Confirme que as informações são verdadeiras."); return; }
 
@@ -139,7 +140,9 @@ function ReportPage() {
           description: description.trim() || null,
           latitude: coords.lat,
           longitude: coords.lng,
-          address: address.trim() || null,
+          address: address.trim(),
+          neighborhood: neighborhood.trim() || null,
+          municipality: municipality.trim() || null,
         })
         .select("id, protocol")
         .single();
