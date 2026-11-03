@@ -1,6 +1,7 @@
 import { html, icon, raw, statusBadge, lbl, FIRE_TYPES, ago, NEWS_CATS, isVideo, fmtDate, skeleton, sevLabel } from "../ui.js";
 import { getReports, getNews, getStats } from "../data.js";
 import { createMap, pinIcon, reportPopup } from "../map.js";
+import { WHATSAPP_URL } from "../config.js";
 
 export function occRow(r) {
   const media = r.fire_report_images?.find((m) => !isVideo(m.image_url))?.image_url;
@@ -101,6 +102,16 @@ export default async function home({ el }) {
     <div class="wrap">
       <div class="section-head"><h2 class="h2">Últimos avisos</h2><a href="/mapa">Abrir o mapa completo</a></div>
       <div id="recent">${skeleton(1, 260)}</div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:8px">
+    <div class="wrap">
+      <a class="wa-band" href="${WHATSAPP_URL}" target="_blank" rel="noopener">
+        <img src="/assets/mimo/celular.webp" alt="" width="150">
+        <span class="wa-text"><b class="h2">Entre no nosso grupo do WhatsApp</b><span>Receba alertas de fogo em Saquarema no celular e converse com quem cuida do seu bairro.</span></span>
+        <span class="btn btn-wa btn-lg">${icon("zap")} Entrar no grupo</span>
+      </a>
     </div>
   </section>
 

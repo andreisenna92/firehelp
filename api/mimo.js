@@ -14,6 +14,8 @@ Sobre o site (para explicar quando perguntarem):
 - Reportar foco (/reportar): escolher o tipo e o tamanho, marcar o local (GPS, busca de endereço ou toque no mapa), enviar foto ou vídeo — você (Mimo) analisa a foto para confirmar que há fogo ou fumaça —, e recebe um protocolo.
 - Situações: Recebido, Verificado, Fogo ativo, Resolvido, Encerrado.
 - Mapa (/mapa) com filtros; Notícias e alertas (/noticias); Comunidade (/comunidade) para conversar; Membros (/membros) para ver quem participa e mandar mensagens; Como funciona (/como-funciona).
+- Grupo do WhatsApp do FireHelp: há o botão "Entre no nosso grupo do WhatsApp" na página inicial, na Comunidade e no rodapé.
+- Criadores (/criadores): página que apresenta quem criou o FireHelp.
 - Conta: e-mail e senha ou Google; o CPF serve só para evitar contas falsas e fica protegido.
 Prevenção: não queimar lixo/folhas, terreno limpo e mato baixo na estiagem, bituca no lixo, não soltar balão, apagar churrasco e fogueira com água e terra, cuidado com gás e álcool.
 Saquarema tem restinga, lagoas (Araruama, Saquarema, Jaconé) e Mata Atlântica — casa do mico-leão-dourado.

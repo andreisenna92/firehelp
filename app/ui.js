@@ -49,6 +49,9 @@ const P = {
   image: '<rect x="4" y="5" width="16" height="14" rx="1.5"/><circle cx="9" cy="10" r="1.6"/><path d="m5 18 5-5 3.5 3.5L16 14l4 4"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>',
   send: '<path d="M4 12 20 4l-5 16-3-6.5L4 12Z"/>',
+  zap: '<path d="M5.5 18.5 4 21l2.7-1.3A8.5 8.5 0 1 0 3.5 12c0 1.6.4 3.1 1.2 4.4"/><path d="M9 8.6c.2-.5.6-.6 1-.6l.6.1.8 1.8c.1.3 0 .5-.2.7l-.5.6c.6 1.2 1.6 2.2 2.8 2.8l.6-.5c.2-.2.4-.3.7-.2l1.8.8.1.6c0 .4-.1.8-.6 1-.7.4-1.7.5-3-.1a8.6 8.6 0 0 1-4.2-4.2c-.6-1.3-.5-2.3-.1-3Z"/>',
+  globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 2.5 14.4 0 17M12 3.5c-2.5 2.6-2.5 14.4 0 17"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
 };
 export const icon = (name, cls = "") =>
   raw(`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name] || ""}</svg>`);

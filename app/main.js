@@ -3,6 +3,7 @@ import { auth } from "./sb.js";
 import { me, loadMe, onMe, displayName } from "./store.js";
 import { html, icon, avatar, $, $$, toast } from "./ui.js";
 import { mountMimo } from "./mimo.js";
+import { WHATSAPP_URL } from "./config.js";
 
 const routes = [
   ["/", "home", "Início"],
@@ -13,6 +14,7 @@ const routes = [
   ["/comunidade", "comunidade", "Comunidade"],
   ["/comunidade/:id", "topico", "Tópico"],
   ["/como-funciona", "como-funciona", "Como funciona"],
+  ["/criadores", "criadores", "Conheça nossos criadores"],
   ["/auth", "entrar", "Entrar"],
   ["/reset-password", "nova-senha", "Nova senha"],
   ["/completar-cadastro", "completar-cadastro", "Completar cadastro", { auth: true }],
@@ -34,7 +36,7 @@ function match(path) {
 }
 
 /* ---------------- shell ---------------- */
-const NAV = [["/", "Início", "home"], ["/mapa", "Mapa", "map"], ["/noticias", "Notícias", "news"], ["/comunidade", "Comunidade", "chat"], ["/membros", "Membros", "users"], ["/como-funciona", "Como funciona", "info"]];
+const NAV = [["/", "Início", "home"], ["/mapa", "Mapa", "map"], ["/noticias", "Notícias", "news"], ["/comunidade", "Comunidade", "chat"], ["/membros", "Membros", "users"], ["/como-funciona", "Como funciona", "info"], ["/criadores", "Criadores", "users"]];
 
 function shell() {
   document.body.innerHTML = html`
@@ -45,7 +47,9 @@ function shell() {
         <span class="brand-mimo" aria-hidden="true"><span class="bm-ring"></span><span class="bm-clip"><span class="bm-fig"><img src="/assets/mimo/heroi-corpo.webp" alt="" width="576" height="768"><img class="brand-hand" src="/assets/mimo/heroi-mao.webp" alt="" width="576" height="768"></span></span></span>
         <span class="brand-txt"><b>FireHelp</b><small>Saquarema</small></span>
       </a>
-      <nav class="topnav" aria-label="Principal">${NAV.map(([href, label]) => html`<a href="${href}" data-nav>${label}</a>`)}</nav>
+      <nav class="topnav" aria-label="Principal">${NAV.map(([href, label], i) => html`<a href="${href}" data-nav ${i >= 4 ? html`class="nav-extra"` : ""}>${label}</a>`)}
+        <details class="nav-more"><summary>Mais</summary><div class="acct-menu">${NAV.slice(4).map(([href, label, ic]) => html`<a href="${href}" data-nav>${icon(ic)} ${label}</a>`)}</div></details>
+      </nav>
       <div class="top-actions">
         <a class="call193" href="tel:193" aria-label="Ligar para os Bombeiros, 193">${icon("phone")}<span>193</span></a>
         <a class="btn btn-fire btn-sm hide-sm" href="/reportar">${icon("flame")} Reportar foco</a>
@@ -65,12 +69,13 @@ function shell() {
           <a href="tel:192"><b>192</b> SAMU</a>
         </div>
       </div>
+      <a class="wa-foot" href="${WHATSAPP_URL}" target="_blank" rel="noopener">${icon("zap")}<span><b>Entre no nosso grupo do WhatsApp</b><small>Alertas e conversa com os vizinhos</small></span></a>
       <div class="foot-about">
         <img src="/assets/mimo/rosto.webp" alt="" width="48" height="48" loading="lazy">
         <p>O FireHelp é uma rede comunitária de Saquarema para avisar, acompanhar e prevenir incêndios. Não substitui os serviços oficiais.</p>
       </div>
       <nav class="foot-links" aria-label="Rodapé">
-        <a href="/como-funciona">Como funciona</a><a href="/mapa">Mapa</a><a href="/reportar">Reportar foco</a><a href="/comunidade">Comunidade</a><a href="/membros">Membros</a><a href="/noticias">Notícias</a>
+        <a href="/como-funciona">Como funciona</a><a href="/mapa">Mapa</a><a href="/reportar">Reportar foco</a><a href="/comunidade">Comunidade</a><a href="/membros">Membros</a><a href="/noticias">Notícias</a><a href="/criadores">Criadores</a>
       </nav>
     </div>
   </footer>
@@ -125,7 +130,7 @@ async function render() {
     const href = a.getAttribute("href");
     a.toggleAttribute("aria-current", href === "/" ? path === "/" : path === href || path.startsWith(href + "/"));
   });
-  $("details.acct")?.removeAttribute("open");
+  document.querySelectorAll("details.acct, details.nav-more").forEach((d) => d.removeAttribute("open"));
   if (typeof cleanup === "function") { try { cleanup(); } catch { /* ignora */ } }
   cleanup = null;
 
@@ -176,7 +181,7 @@ document.addEventListener("click", (e) => {
   go(url.pathname + url.search);
 });
 // fecha o menu da conta ao clicar fora
-document.addEventListener("click", (e) => { const d = $("details.acct[open]"); if (d && !d.contains(e.target)) d.removeAttribute("open"); });
+document.addEventListener("click", (e) => { document.querySelectorAll("details.acct[open], details.nav-more[open]").forEach((d) => { if (!d.contains(e.target)) d.removeAttribute("open"); }); });
 window.addEventListener("popstate", render);
 
 /* ---------------- início ---------------- */

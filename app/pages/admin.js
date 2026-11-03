@@ -86,7 +86,7 @@ const PANES = {
 
   /* ---------------- notícias ---------------- */
   async noticias(pane, { refresh }) {
-    const rows = await q("news", { select: "*", order: "created_at.desc" });
+    const rows = await q("news", { select: "*", slug: "not.like.criador-*", order: "created_at.desc" });
     let editing = rows.find((n) => n.id === new URLSearchParams(location.search).get("editar")) || null;
     const form = (n = {}) => html`<form class="card stack" id="nf">
       <h2 class="h3">${n.id ? "Editar notícia" : "Nova notícia ou alerta"}</h2>

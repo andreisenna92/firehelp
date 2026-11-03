@@ -3,6 +3,7 @@ import { q, insert, upload } from "../sb.js";
 import { go } from "../main.js";
 import { me, displayName, loadMe } from "../store.js";
 import { profilesFor } from "../data.js";
+import { WHATSAPP_URL } from "../config.js";
 
 export default async function comunidade({ el, query }) {
   await (me.ready ? null : loadMe());
@@ -12,6 +13,7 @@ export default async function comunidade({ el, query }) {
       <div><h1 class="h1">Comunidade</h1><p class="lead">Converse com vizinhos sobre fumaça na região, prevenção, meio ambiente e segurança em Saquarema.</p></div>
       ${me.user ? (me.needsCpf ? html`<a class="btn btn-ink" href="/completar-cadastro">Completar cadastro para participar</a>` : html`<button class="btn btn-ink" id="new">${icon("plus")} Novo tópico</button>`) : html`<a class="btn btn-ink" href="/auth">Entrar para participar</a>`}
     </div>
+    <a class="wa-strip" href="${WHATSAPP_URL}" target="_blank" rel="noopener">${icon("zap")}<span>Prefere o celular? <b>Entre no grupo do WhatsApp do FireHelp</b></span></a>
     <form class="card stack" id="composer" hidden style="margin-bottom:22px">
       <h2 class="h3">Novo tópico</h2>
       <label class="field"><span>Título</span><input name="title" maxlength="200" required placeholder="Ex.: Fumaça forte perto da Lagoa de Jaconé"></label>

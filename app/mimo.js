@@ -28,6 +28,8 @@ const FAQ = [
   [/situa|status|cor|recebido|verificado|resolvid/i, "Recebido = aviso novo; Verificado = a equipe confirmou; Fogo ativo = incêndio em andamento; Resolvido = apagado; Encerrado = sem confirmação."],
   [/telefone|n[uú]mero|ligar|193|199|emerg/i, "Bombeiros 193 · Defesa Civil 199 · SAMU 192 · Polícia Militar 190. Em emergência, ligue antes de qualquer coisa."],
   [/conta|login|entrar|cpf|senha|google/i, "Você pode entrar com e-mail e senha ou com o Google. O CPF serve só para evitar contas falsas e fica guardado de forma protegida."],
+  [/whats|zap|grupo/i, "Temos um grupo no WhatsApp! Procure o botão verde \"Entre no nosso grupo do WhatsApp\" na página inicial ou no rodapé."],
+  [/criador|quem fez|quem criou/i, "Quem criou o FireHelp está na página /criadores — lá tem foto, história e projetos de cada um."],
   [/mimo|quem [eé] voc/i, "Sou o Mimo, um mico-leão-dourado bombeiro! Meus parentes vivem na Mata Atlântica do Rio — por isso eu cuido tanto da mata de Saquarema."],
 ];
 const fallback = (q) => (FAQ.find(([re]) => re.test(q)) || [, "Ainda estou aprendendo essa! Dá uma olhada em Como funciona, ou pergunte sobre como reportar, prevenção ou números de emergência."])[1];
